@@ -1,8 +1,8 @@
 import unittest
 import torch
-from distributions import GaussianVariational, ScaleMixturePrior
+from weight_sampler import GaussianVariational, ScaleMixturePrior
 
-class TestDistributions(unittest.TestCase):
+class TestWeightSampler(unittest.TestCase):
 
     def test_gaussian_sample(self):
         #checks if sample works
