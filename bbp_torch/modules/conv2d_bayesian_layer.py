@@ -9,7 +9,27 @@ from bbp_torch.modules.weight_sampler import GaussianVariational, ScaleMixturePr
 class BayesianConv2d(BayesianModule):
 
     # Implements Bayesian Conv2d layer, by drawing them using Weight Uncertanity on Neural Networks algorithm
+    """
+    Bayesian Linear layer, implements a Convolution 2D layer as proposed on Weight Uncertainity on Neural Networks
+    (Bayes by Backprop paper).
 
+    Its objective is be interactable with torch nn.Module API, being able even to be chained in nn.Sequential models with other non-this-lib layers
+
+    parameters:
+        in_channels: int -> incoming channels for the layer
+        out_channels: int -> output channels for the layer
+        kernel_size : tuple (int, int) -> size of the kernels for this convolution layer
+        groups : int -> number of groups on which the convolutions will happend
+        padding : int -> size of padding (0 if no padding)
+        dilation int -> dilation of the weights applied on the input tensor
+
+
+        bias: bool -> whether the bias will exist (True) or set to zero (False)
+        prior_sigma_1: float -> prior sigma on the mixture prior distribution 1
+        prior_sigma_2: float -> prior sigma on the mixture prior distribution 2
+        prior_pi: float -> pi on the scaled mixture prior
+    
+    """
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -56,7 +76,8 @@ class BayesianConv2d(BayesianModule):
         self.log_variational_posterior = 0
 
     def forward(self, x):
-        #Forward with uncertain weights
+        #Forward with uncertain weights, fills bias with zeros if layer has no bias
+        #Also calculates the complecity cost for this sampling
         w = self.weight_sampler.sample()
 
         if self.bias:
@@ -81,9 +102,8 @@ class BayesianConv2d(BayesianModule):
                         groups=self.groups)
 
     def forward_frozen(self, x):
-        """
-        Computes the feedforward operation with the expected value for weight and biases
-        """
+        # Computes the feedforward operation with the expected value for weight and biases (frozen-like)
+        
         if self.bias:
             return F.conv2d(input=x,
                         weight=self.weight_mu,

@@ -10,6 +10,8 @@ class BayesianLinear(BayesianModule):
     Bayesian Linear layer, implements the linear layer proposed on Weight Uncertainity on Neural Networks
     (Bayes by Backprop paper).
 
+    Its objective is be interactable with torch nn.Module API, being able even to be chained in nn.Sequential models with other non-this-lib layers
+    
     parameters:
         in_fetaures: int -> incoming features for the layer
         out_features: int -> output features for the layer
