@@ -105,18 +105,15 @@ class BayesianConv2d(BayesianModule):
         # Computes the feedforward operation with the expected value for weight and biases (frozen-like)
 
         if self.bias:
-            return F.conv2d(input=x,
-                            weight=self.weight_mu,
-                            bias=self.bias_mu,
-                            stride=self.stride,
-                            padding=self.padding,
-                            dilation=self.dilation,
-                            groups=self.groups)
+            bias = self.bias_mu
+            assert bias is self.bias_mu, "The bias inputed should be this layer parameter, not a clone."
         else:
-            return F.conv2d(input=x,
-                            weight=self.weight_mu,
-                            bias=torch.zeros(self.out_channels),
-                            stride=self.stride,
-                            padding=self.padding,
-                            dilation=self.dilation,
-                            groups=self.groups)
+            bias = torch.zeros(self.out_channels)
+
+        return F.conv2d(input=x,
+                        weight=self.weight_mu,
+                        bias=bias,
+                        stride=self.stride,
+                        padding=self.padding,
+                        dilation=self.dilation,
+                        groups=self.groups)
