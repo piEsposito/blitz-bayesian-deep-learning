@@ -6,6 +6,19 @@ from weight_sampler import GaussianVariational, ScaleMixturePrior
 
 
 class BayesianLinear(nn.Module):
+    """
+    Bayesian Linear layer, implements the linear layer proposed on Weight Uncertainity on Neural Networks
+    (Bayes by Backprop paper).
+
+    parameters:
+        in_fetaures: int -> incoming features for the layer
+        out_features: int -> output features for the layer
+        bias: bool -> whether the bias will exist (True) or set to zero (False)
+        prior_sigma_1: float -> prior sigma on the mixture prior distribution 1
+        prior_sigma_2: float -> prior sigma on the mixture prior distribution 2
+        prior_pi: float -> pi on the scaled mixture prior
+    
+    """
     def __init__(self,
                  in_features,
                  out_features,
@@ -62,6 +75,9 @@ class BayesianLinear(nn.Module):
         return F.linear(x, w, b)
 
     def forward_frozen(self, x):
+        """
+        Computes the feedforward operation with the expected value for weight and biases
+        """
         if self.bias:
             return F.linear(x, self.weight_mu, self.bias_mu)
         else:
