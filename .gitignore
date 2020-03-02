@@ -131,4 +131,5 @@ dmypy.json
 #vscode
 .vscode/
 
-#run all tests
+#example data
+example/data/
