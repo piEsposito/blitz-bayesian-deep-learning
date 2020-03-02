@@ -2,7 +2,7 @@ import unittest
 import torch
 from torch import nn
 
-from base_bayesian_module import BayesianModule
+from bbp_torch.modules.base_bayesian_module import BayesianModule
 
 class TestLinearBayesian(unittest.TestCase):
 

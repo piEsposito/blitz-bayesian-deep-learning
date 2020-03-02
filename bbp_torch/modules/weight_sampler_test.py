@@ -1,6 +1,6 @@
 import unittest
 import torch
-from weight_sampler import GaussianVariational, ScaleMixturePrior
+from bbp_torch.modules.weight_sampler import GaussianVariational, ScaleMixturePrior
 
 class TestWeightSampler(unittest.TestCase):
 
