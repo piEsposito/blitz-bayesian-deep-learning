@@ -40,3 +40,17 @@ class BayesianLinear(nn.Module):
         self.bias_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2)
         self.log_prior = 0
         self.log_variational_posterior = 0
+
+    def forward(self, x):
+        # Sample the weights
+        w = self.weight_sampler.sample()
+        b = self.bias_sampler.sample()
+
+        # Get the complexity cost
+        self.log_variational_posterior = self.weight_sampler.log_posterior() + self.bias_sampler.log_posterior()
+        self.log_prior = self.weight_prior_dist.log_prior(w) + self.bias_prior_dist.log_prior(b)
+
+        return F.linear(x, w, b)
+
+    def forward_frozen(self, x):
+        return F.linear(x, self.weight_mu, self.bias_mu)
