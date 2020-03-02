@@ -1,6 +1,6 @@
 import unittest
 import torch
-import torch.nn
+import torch.nn as nn
 import torch.nn.functional as F
 
 from bbp_torch.losses import kl_divergence_from_nn
@@ -20,6 +20,12 @@ class TestKLDivergence(unittest.TestCase):
         pass
     
     def test_kl_divergence_non_bayesian_module(self):
+        linear = nn.Linear(10, 10)
+        to_feed = torch.ones((1, 10))
+        predicted = linear(to_feed)
+
+        kl_complexity_cost = kl_divergence_from_nn(linear)
+        self.assertEqual((torch.tensor(0) == kl_complexity_cost).all(), torch.tensor(True))
         pass
 
     def test_kl_divergence_whole_model(self):

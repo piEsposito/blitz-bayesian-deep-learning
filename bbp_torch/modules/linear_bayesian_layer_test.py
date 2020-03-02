@@ -59,13 +59,23 @@ class TestLinearBayesian(unittest.TestCase):
         self.assertEqual((complexity_cost == complexity_cost).all(), torch.tensor(True))
         pass
 
-    def check_inheritance(self):
+    def test_inheritance(self):
 
         #check if bayesian linear has nn.Module and BayesianModule classes
         blinear = BayesianLinear(10, 10)
         self.assertEqual(isinstance(blinear, (nn.Module)), True)
         self.assertEqual(isinstance(blinear, (BayesianModule)), True)
 
+    def test_sequential(self):
+        #check if we can create sequential models chaning our Bayesian Linear layers
+        model = nn.Sequential(BayesianLinear(10, 10),
+                              nn.Linear(10, 15),
+                              BayesianLinear(15,10))
 
+        to_feed = torch.ones((1, 10))
+        #if this works, the test will pass
+        result = model(to_feed)
+        pass
+    
 if __name__ == "__main__":
     unittest.main()
