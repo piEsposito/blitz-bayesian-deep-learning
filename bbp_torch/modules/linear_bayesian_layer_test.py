@@ -1,9 +1,10 @@
 import unittest
+from linear_bayesian_layer import BayesianLinear
 
 class TestLinearBayesian(unittest.TestCase):
 
     def test_init_bayesian_layer(self):
-        #create bayesian layer
+        module = BayesianLinear(10, 10)
         pass
 
     def test_weights_shape(self):
