@@ -56,6 +56,7 @@ class BayesianConv2d(BayesianModule):
         self.log_variational_posterior = 0
 
     def forward(self, x):
+        #Forward with uncertain weights
         w = self.weight_sampler.sample()
 
         if self.bias:
@@ -64,7 +65,7 @@ class BayesianConv2d(BayesianModule):
             b_log_prior = self.bias_prior_dist.log_prior(b)
 
         else:
-            b = torch.zeros((self.out_features))
+            b = torch.zeros((self.out_channels))
             b_log_posterior = 0
             b_log_prior = 0
 
@@ -74,6 +75,27 @@ class BayesianConv2d(BayesianModule):
         return F.conv2d(input=x,
                         weight=w,
                         bias=b,
+                        stride=self.stride,
+                        padding=self.padding,
+                        dilation=self.dilation,
+                        groups=self.groups)
+
+    def forward_frozen(self, x):
+        """
+        Computes the feedforward operation with the expected value for weight and biases
+        """
+        if self.bias:
+            return F.conv2d(input=x,
+                        weight=self.weight_mu,
+                        bias=self.bias_mu,
+                        stride=self.stride,
+                        padding=self.padding,
+                        dilation=self.dilation,
+                        groups=self.groups)
+        else:
+            return F.conv2d(input=x,
+                        weight=self.weight_mu,
+                        bias=torch.zeros(self.out_channels),
                         stride=self.stride,
                         padding=self.padding,
                         dilation=self.dilation,

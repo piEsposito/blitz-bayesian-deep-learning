@@ -14,7 +14,7 @@ class TestConv2DBayesian(unittest.TestCase):
 
     def test_weights_shape(self):
        #check if weights shape is the expected
-       to_feed = torch.ones((1, 3, 25, 25))
+       
        bconv = BayesianConv2d(in_channels=3,
                               out_channels=3,
                               kernel_size=(3,3))
@@ -22,6 +22,8 @@ class TestConv2DBayesian(unittest.TestCase):
        conv = nn.Conv2d(in_channels=3,
                         out_channels=3,
                         kernel_size=(3,3))
+
+       to_feed = torch.ones((1, 3, 25, 25))
 
        infer1 = bconv(to_feed)
        infer2 = conv(to_feed)
@@ -31,11 +33,33 @@ class TestConv2DBayesian(unittest.TestCase):
 
     def test_variational_inference(self):
         #create module, check if inference is variating
+        bconv = BayesianConv2d(in_channels=3,
+                              out_channels=3,
+                              kernel_size=(3,3))
+
+        conv = nn.Conv2d(in_channels=3,
+                        out_channels=3,
+                        kernel_size=(3,3))
+
+        to_feed = torch.ones((1, 3, 25, 25))
+
+        self.assertEqual((bconv(to_feed) != bconv(to_feed)).any(), torch.tensor(True))
+        self.assertEqual((conv(to_feed) == conv(to_feed)).all(), torch.tensor(True))
         pass
+
 
     def test_freeze_module(self):
         #create module, freeze
         #check if two inferences keep equal
+        bconv = BayesianConv2d(in_channels=3,
+                              out_channels=3,
+                              kernel_size=(3,3),
+                              bias=False)
+
+        to_feed = torch.ones((1, 3, 25, 25))
+
+        self.assertEqual((bconv(to_feed) != bconv(to_feed)).any(), torch.tensor(True))
+        self.assertEqual((bconv.forward_frozen(to_feed) == bconv.forward_frozen(to_feed)).all(), torch.tensor(True))
         pass
 
     def test_kl_divergence(self):
