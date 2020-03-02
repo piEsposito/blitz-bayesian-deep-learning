@@ -45,7 +45,7 @@ class BayesianCNN(nn.Module):
         
     def forward(self, x):
         x_ = self.conv_net(x)
-        x_ = x_.view(x.size(0), -1)
+        x_ = x_.view(x_.size(0), -1)
         x_ = self.fc1(x_)
         return self.fc2(x_)
 
