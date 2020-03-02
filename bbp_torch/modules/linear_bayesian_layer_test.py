@@ -40,6 +40,12 @@ class TestLinearBayesian(unittest.TestCase):
         self.assertEqual((blinear(to_feed) != blinear(to_feed)).any(), torch.tensor(True))
         self.assertEqual((blinear.forward_frozen(to_feed) == blinear.forward_frozen(to_feed)).all(), torch.tensor(True))
 
+    def test_no_bias(self):
+        blinear = BayesianLinear(10, 10, bias=False)
+        to_feed = torch.ones((1, 10))
+        self.assertEqual((blinear(to_feed) != blinear(to_feed)).any(), torch.tensor(True))
+        pass
+
     def test_kl_divergence(self):
         #create model, sample weights
         #check if kl divergence between apriori and a posteriori is working

@@ -44,13 +44,25 @@ class BayesianLinear(nn.Module):
     def forward(self, x):
         # Sample the weights
         w = self.weight_sampler.sample()
-        b = self.bias_sampler.sample()
+
+        if self.bias:
+            b = self.bias_sampler.sample()
+            b_log_posterior = self.bias_sampler.log_posterior()
+            b_log_prior = self.bias_prior_dist.log_prior(b)
+
+        else:
+            b = torch.zeros((self.out_features))
+            b_log_posterior = 0
+            b_log_prior = 0
 
         # Get the complexity cost
-        self.log_variational_posterior = self.weight_sampler.log_posterior() + self.bias_sampler.log_posterior()
-        self.log_prior = self.weight_prior_dist.log_prior(w) + self.bias_prior_dist.log_prior(b)
+        self.log_variational_posterior = self.weight_sampler.log_posterior() + b_log_posterior
+        self.log_prior = self.weight_prior_dist.log_prior(w) + b_log_prior
 
         return F.linear(x, w, b)
 
     def forward_frozen(self, x):
-        return F.linear(x, self.weight_mu, self.bias_mu)
+        if self.bias:
+            return F.linear(x, self.weight_mu, self.bias_mu)
+        else:
+            return F.linear(x, self.weight_mu, torch.zeros(self.out_features))
