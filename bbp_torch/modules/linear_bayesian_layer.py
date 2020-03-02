@@ -1,11 +1,11 @@
 import torch
 from torch import nn
 from torch.nn import functional as F
-
+from base_bayesian_module import BayesianModule
 from weight_sampler import GaussianVariational, ScaleMixturePrior
 
 
-class BayesianLinear(nn.Module):
+class BayesianLinear(BayesianModule):
     """
     Bayesian Linear layer, implements the linear layer proposed on Weight Uncertainity on Neural Networks
     (Bayes by Backprop paper).

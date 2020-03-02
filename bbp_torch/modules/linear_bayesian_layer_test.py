@@ -3,6 +3,7 @@ import torch
 from torch import nn
 
 from linear_bayesian_layer import BayesianLinear
+from base_bayesian_module import BayesianModule
 
 class TestLinearBayesian(unittest.TestCase):
 
@@ -57,6 +58,13 @@ class TestLinearBayesian(unittest.TestCase):
 
         self.assertEqual((complexity_cost == complexity_cost).all(), torch.tensor(True))
         pass
+
+    def check_inheritance(self):
+
+        #check if bayesian linear has nn.Module and BayesianModule classes
+        blinear = BayesianLinear(10, 10)
+        self.assertEqual(isinstance(blinear, (nn.Module)), True)
+        self.assertEqual(isinstance(blinear, (BayesianModule)), True)
 
 
 if __name__ == "__main__":
