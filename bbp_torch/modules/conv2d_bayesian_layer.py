@@ -103,20 +103,20 @@ class BayesianConv2d(BayesianModule):
 
     def forward_frozen(self, x):
         # Computes the feedforward operation with the expected value for weight and biases (frozen-like)
-        
+
         if self.bias:
             return F.conv2d(input=x,
-                        weight=self.weight_mu,
-                        bias=self.bias_mu,
-                        stride=self.stride,
-                        padding=self.padding,
-                        dilation=self.dilation,
-                        groups=self.groups)
+                            weight=self.weight_mu,
+                            bias=self.bias_mu,
+                            stride=self.stride,
+                            padding=self.padding,
+                            dilation=self.dilation,
+                            groups=self.groups)
         else:
             return F.conv2d(input=x,
-                        weight=self.weight_mu,
-                        bias=torch.zeros(self.out_channels),
-                        stride=self.stride,
-                        padding=self.padding,
-                        dilation=self.dilation,
-                        groups=self.groups)
+                            weight=self.weight_mu,
+                            bias=torch.zeros(self.out_channels),
+                            stride=self.stride,
+                            padding=self.padding,
+                            dilation=self.dilation,
+                            groups=self.groups)
