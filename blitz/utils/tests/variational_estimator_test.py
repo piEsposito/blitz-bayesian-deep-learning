@@ -33,7 +33,7 @@ class TestVariationalInference(unittest.TestCase):
 
         self.assertEqual((complexity_cost == kl_complexity_cost).all(), torch.tensor(True))
 
-    def test_variance_over_prediction(self):
+    def test_elbo_sampler(self):
         dataset = dsets.MNIST(root="./data",
                                     train=True,
                                     transform=transforms.ToTensor(),
