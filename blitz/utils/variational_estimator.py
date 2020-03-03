@@ -1,6 +1,6 @@
 import torch
 from blitz.losses import kl_divergence_from_nn
-
+from blitz.modules.base_bayesian_module import BayesianModule
 def variational_estimator(nn_class):
 
     def nn_kl_divergence(self):
@@ -16,6 +16,7 @@ def variational_estimator(nn_class):
                     criterion,
                     sample_nbr):
 
+        #samples the ELBO loss for a batch of "datapoint, input" pars
         loss = 0
         for _ in range(sample_nbr):
             outputs = self(inputs)
@@ -24,5 +25,14 @@ def variational_estimator(nn_class):
         return loss / sample_nbr
     
     setattr(nn_class, "sample_elbo", sample_elbo)
+
+
+    def freeze_model(self):
+        #frezes all the BayesianModule's on the current model
+        for module in self.modules():
+            if isinstance(module, (BayesianModule)):
+                module.freeze = True
+
+    setattr(nn_class, "freeze", freeze_model)
 
     return nn_class
