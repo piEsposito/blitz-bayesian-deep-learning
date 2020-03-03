@@ -60,13 +60,13 @@ class BayesianConv2d(BayesianModule):
         self.prior_pi = prior_pi
 
         #our weights
-        self.weight_mu = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *kernel_size).uniform_(-0.2, 0.2))
-        self.weight_rho = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *kernel_size).uniform_(-5, -4))
+        self.weight_mu = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *kernel_size).uniform_(-1, 1))
+        self.weight_rho = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *kernel_size).uniform_(-1, 1))
         self.weight_sampler = GaussianVariational(self.weight_mu, self.weight_rho)
 
         #our biases
-        self.bias_mu = nn.Parameter(torch.Tensor(out_channels).uniform_(-0.2, 0.2))
-        self.bias_rho = nn.Parameter(torch.Tensor(out_channels).uniform_(-5, -4))
+        self.bias_mu = nn.Parameter(torch.Tensor(out_channels).uniform_(-1, 1))
+        self.bias_rho = nn.Parameter(torch.Tensor(out_channels).uniform_(-1, 1))
         self.bias_sampler = GaussianVariational(self.bias_mu, self.bias_rho)
 
         # Priors (as BBP paper)
