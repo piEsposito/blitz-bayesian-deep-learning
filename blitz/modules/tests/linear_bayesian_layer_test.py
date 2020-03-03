@@ -39,7 +39,10 @@ class TestLinearBayesian(unittest.TestCase):
         blinear = BayesianLinear(10, 10)
         to_feed = torch.ones((1, 10))
         self.assertEqual((blinear(to_feed) != blinear(to_feed)).any(), torch.tensor(True))
-        self.assertEqual((blinear.forward_frozen(to_feed) == blinear.forward_frozen(to_feed)).all(), torch.tensor(True))
+
+        frozen_feedforward = blinear.forward_frozen(to_feed)
+        blinear.freeze = True
+        self.assertEqual((blinear.forward(to_feed) == frozen_feedforward).all(), torch.tensor(True))
 
     def test_no_bias(self):
         blinear = BayesianLinear(10, 10, bias=False)

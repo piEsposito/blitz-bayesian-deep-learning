@@ -19,6 +19,7 @@ class BayesianLinear(BayesianModule):
         prior_sigma_1: float -> prior sigma on the mixture prior distribution 1
         prior_sigma_2: float -> prior sigma on the mixture prior distribution 2
         prior_pi: float -> pi on the scaled mixture prior
+        freeze: bool -> wheter the model will start with frozen(deterministic) weights, or not
     
     """
     def __init__(self,
@@ -27,13 +28,15 @@ class BayesianLinear(BayesianModule):
                  bias=True,
                  prior_sigma_1 = 1,
                  prior_sigma_2 = 0.002,
-                 prior_pi = 0.5):
+                 prior_pi = 0.5,
+                 freeze = False):
         super().__init__()
 
         #our main parameters
         self.in_features = in_features
         self.out_features = out_features
         self.bias = bias
+        self.freeze = freeze
 
         #parameters for the scale mixture prior
         self.prior_sigma_1 = prior_sigma_1
@@ -56,9 +59,13 @@ class BayesianLinear(BayesianModule):
         self.log_prior = 0
         self.log_variational_posterior = 0
 
-    def forward(self, x, sample=True):
+    def forward(self, x):
         # Sample the weights
         
+        #if the model is frozen, return frozen
+        if self.freeze:
+            return self.forward_frozen(x)
+
         w = self.weight_sampler.sample()
 
         if self.bias:

@@ -28,6 +28,7 @@ class BayesianConv2d(BayesianModule):
         prior_sigma_1: float -> prior sigma on the mixture prior distribution 1
         prior_sigma_2: float -> prior sigma on the mixture prior distribution 2
         prior_pi: float -> pi on the scaled mixture prior
+        freeze: bool -> wheter the model will start with frozen(deterministic) weights, or not
     
     """
     def __init__(self,
@@ -41,12 +42,14 @@ class BayesianConv2d(BayesianModule):
                  bias=True,
                  prior_sigma_1 = 1,
                  prior_sigma_2 = 0.002,
-                 prior_pi = 0.5):
+                 prior_pi = 0.5,
+                 freeze = False):
         super().__init__()
         
         #our main parameters
         self.in_channels = in_channels
         self.out_channels = out_channels
+        self.freeze = freeze
         self.kernel_size = kernel_size
         self.groups = groups
         self.stride = stride
@@ -78,6 +81,9 @@ class BayesianConv2d(BayesianModule):
     def forward(self, x):
         #Forward with uncertain weights, fills bias with zeros if layer has no bias
         #Also calculates the complecity cost for this sampling
+        if self.freeze:
+            return self.forward_frozen(x)
+
         w = self.weight_sampler.sample()
 
         if self.bias:
