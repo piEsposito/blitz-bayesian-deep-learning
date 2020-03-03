@@ -40,7 +40,7 @@ class TestVariationalInference(unittest.TestCase):
                                     download=True
                                     )
 
-        dataloader = torch.utils.data.DataLoader(dataset=train_dataset,
+        dataloader = torch.utils.data.DataLoader(dataset=dataset,
                                                    batch_size=16,
                                                    shuffle=True)
 
