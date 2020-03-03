@@ -103,6 +103,8 @@ class TestVariationalInference(unittest.TestCase):
         net.freeze()
         self.assertEqual((net(batch[0])==net(batch[0])).all(), torch.tensor(True))
 
+        net.unfreeze()
+        self.assertEqual((net(batch[0])!=net(batch[0])).any(), torch.tensor(True))
         pass
 
 if __name__ == "__main__":
