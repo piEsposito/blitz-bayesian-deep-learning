@@ -56,8 +56,9 @@ class BayesianLinear(BayesianModule):
         self.log_prior = 0
         self.log_variational_posterior = 0
 
-    def forward(self, x):
+    def forward(self, x, sample=True):
         # Sample the weights
+        
         w = self.weight_sampler.sample()
 
         if self.bias:
