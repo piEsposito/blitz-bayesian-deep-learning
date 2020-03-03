@@ -7,6 +7,7 @@ import torchvision.transforms as transforms
 
 from blitz.modules import BayesianLinear, BayesianConv2d
 from blitz.losses import kl_divergence_from_nn
+from blitz.utils import variational_estimator
 
 train_dataset = dsets.MNIST(root="./data",
                              train=True,
@@ -26,7 +27,7 @@ test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
                                            batch_size=64,
                                            shuffle=True)
 
-
+@variational_estimator
 class BayesianCNN(nn.Module):
     def __init__(self):
         super().__init__()
