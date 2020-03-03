@@ -5,6 +5,9 @@ this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_desc = f.read()
 
+with open(path.join(this_directory, 'requirements.txt'), encoding='utf-8') as f:
+    install_requires = f.read()
+
 setup(
     name = "blitz-bayesian-torch",
     packages = find_packages(),
@@ -14,16 +17,10 @@ setup(
     url = "https://github.com/piEsposito/blitz-bayesian-deep-learning",
     long_desc = long_desc,
     long_description_content_type = "text/markdown",
-    install_requieres = [
-                            "torch==1.3.1",
-                            "torchvision==0.4.2",
-                        ],
+    install_requires = install_requires,
     classifiers = [
                     "Development Status :: 3 - Alpha",
                     "Intended Audience :: Developers",
                     "Programming Language :: Python :: 3.7"
                   ]
-
-
-
 )
