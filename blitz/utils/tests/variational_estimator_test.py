@@ -72,6 +72,37 @@ class TestVariationalInference(unittest.TestCase):
     def test_freeze_estimator(self):
         #create model, freeze it
         #infer two times on same datapoint, check if all equal
+        dataset = dsets.MNIST(root="./data",
+                                    train=True,
+                                    transform=transforms.ToTensor(),
+                                    download=True
+                                    )
+
+        dataloader = torch.utils.data.DataLoader(dataset=dataset,
+                                                   batch_size=16,
+                                                   shuffle=True)
+
+        batch = next(iter(dataloader))
+
+        @variational_estimator
+        class BayesianMLP(nn.Module):
+            def __init__(self, input_dim, output_dim):
+                super().__init__()
+                #self.linear = nn.Linear(input_dim, output_dim)
+                self.blinear1 = BayesianLinear(input_dim, 512)
+                self.blinear2 = BayesianLinear(512, output_dim)
+                
+            def forward(self, x):
+                x_ = x.view(-1, 28 * 28)
+                x_ = self.blinear1(x_)
+                return self.blinear2(x_)
+
+        net = BayesianMLP(28*28, 10)
+        self.assertEqual((net(batch[0])!=net(batch[0])).any(), torch.tensor(True))
+
+        net.freeze()
+        self.assertEqual((net(batch[0])==net(batch[0])).all(), torch.tensor(True))
+
         pass
 
 if __name__ == "__main__":
