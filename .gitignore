@@ -133,3 +133,6 @@ dmypy.json
 
 #example data
 example/data/
+utils/data/
+*data/
+/data/
