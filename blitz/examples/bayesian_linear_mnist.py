@@ -6,8 +6,8 @@ import torchvision.datasets as dsets
 import torchvision.transforms as transforms
 
 #imports from our lib
-from bbp_torch.modules import BayesianLinear
-from bbp_torch.losses import kl_divergence_from_nn
+from blitz.modules import BayesianLinear
+from blitz.losses import kl_divergence_from_nn
 
 #create dataloaders
 train_dataset = dsets.MNIST(root="./data",

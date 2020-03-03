@@ -1,6 +1,6 @@
 import unittest
-from bbp_torch.modules import BayesianConv2d
-from bbp_torch.modules.base_bayesian_module import BayesianModule
+from blitz.modules import BayesianConv2d
+from blitz.modules.base_bayesian_module import BayesianModule
 
 import torch
 from torch import nn

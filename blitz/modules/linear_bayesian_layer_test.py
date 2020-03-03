@@ -2,8 +2,8 @@ import unittest
 import torch
 from torch import nn
 
-from bbp_torch.modules import BayesianLinear
-from bbp_torch.modules.base_bayesian_module import BayesianModule
+from blitz.modules import BayesianLinear
+from blitz.modules.base_bayesian_module import BayesianModule
 
 class TestLinearBayesian(unittest.TestCase):
 

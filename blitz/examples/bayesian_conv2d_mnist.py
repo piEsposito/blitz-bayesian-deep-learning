@@ -5,8 +5,8 @@ import torch.optim as optim
 import torchvision.datasets as dsets
 import torchvision.transforms as transforms
 
-from bbp_torch.modules import BayesianLinear, BayesianConv2d
-from bbp_torch.losses import kl_divergence_from_nn
+from blitz.modules import BayesianLinear, BayesianConv2d
+from blitz.losses import kl_divergence_from_nn
 
 train_dataset = dsets.MNIST(root="./data",
                              train=True,

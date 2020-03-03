@@ -3,8 +3,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from bbp_torch.losses import kl_divergence_from_nn
-from bbp_torch.modules import BayesianLinear, BayesianConv2d
+from blitz.losses import kl_divergence_from_nn
+from blitz.modules import BayesianLinear, BayesianConv2d
 
 class TestKLDivergence(unittest.TestCase):
 
