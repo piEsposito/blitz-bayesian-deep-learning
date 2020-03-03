@@ -14,6 +14,7 @@ def variational_estimator(nn_class):
         (2) Sample the Elbo Loss along its variational inferences (helps training)
         (3) Freeze the model, in order to predict using only their weight distribution means
     """
+
     def nn_kl_divergence(self):
         """Returns the sum of the KL divergence of each of the BayesianModules of the model, which are from
             their posterior current distribution of weights relative to a scale-mixtured prior (and simpler) distribution of weights
@@ -54,6 +55,7 @@ def variational_estimator(nn_class):
                             gather the loss to be .backwarded in the optimization of the model.        
         
         """
+
         loss = 0
         for _ in range(sample_nbr):
             outputs = self(inputs)
@@ -78,6 +80,7 @@ def variational_estimator(nn_class):
         """
         Unfreezes the model by letting it draw its weights with uncertanity from their correspondent distributions
         """
+        
         for module in self.modules():
             if isinstance(module, (BayesianModule)):
                 module.freeze = False

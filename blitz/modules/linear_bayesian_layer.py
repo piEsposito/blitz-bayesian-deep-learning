@@ -60,7 +60,7 @@ class BayesianLinear(BayesianModule):
         self.log_variational_posterior = 0
 
     def forward(self, x):
-        # Sample the weights
+        # Sample the weights and forward it
         
         #if the model is frozen, return frozen
         if self.freeze:
