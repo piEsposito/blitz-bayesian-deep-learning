@@ -60,7 +60,10 @@ class TestConv2DBayesian(unittest.TestCase):
         to_feed = torch.ones((1, 3, 25, 25))
 
         self.assertEqual((bconv(to_feed) != bconv(to_feed)).any(), torch.tensor(True))
-        self.assertEqual((bconv.forward_frozen(to_feed) == bconv.forward_frozen(to_feed)).all(), torch.tensor(True))
+
+        frozen_feedforward = bconv.forward_frozen(to_feed)
+        bconv.freeze = True
+        self.assertEqual((bconv.forward(to_feed) == frozen_feedforward).all(), torch.tensor(True))
         pass
     
     def test_inheritance(self):
