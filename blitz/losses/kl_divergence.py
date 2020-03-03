@@ -2,7 +2,7 @@ import torch
 import torch.nn
 import torch.nn.functional as F
 
-from bbp_torch.modules.base_bayesian_module import BayesianModule
+from blitz.modules.base_bayesian_module import BayesianModule
 
 def kl_divergence_from_nn(model):
 

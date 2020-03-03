@@ -3,8 +3,8 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from bbp_torch.modules.base_bayesian_module import BayesianModule
-from bbp_torch.modules.weight_sampler import GaussianVariational, ScaleMixturePrior
+from blitz.modules.base_bayesian_module import BayesianModule
+from blitz.modules.weight_sampler import GaussianVariational, ScaleMixturePrior
 
 class BayesianConv2d(BayesianModule):
 
