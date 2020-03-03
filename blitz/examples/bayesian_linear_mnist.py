@@ -8,6 +8,7 @@ import torchvision.transforms as transforms
 #imports from our lib
 from blitz.modules import BayesianLinear
 from blitz.losses import kl_divergence_from_nn
+from blitz.utils import variational_estimator
 
 #create dataloaders
 train_dataset = dsets.MNIST(root="./data",
@@ -28,6 +29,7 @@ test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
                                            batch_size=32,
                                            shuffle=True)
 #lets just create our bnn class
+@variational_estimator
 class BayesianNetwork(nn.Module):
     def __init__(self, input_dim, output_dim):
         super().__init__()
@@ -48,9 +50,11 @@ iteration = 0
 for epoch in range(5):
     for i, (datapoints, labels) in enumerate(train_loader):
         optimizer.zero_grad()
-        outputs = classifier(datapoints)
-        loss = criterion(outputs, labels)
-        loss += kl_divergence_from_nn(classifier)
+        
+        loss = classifier.sample_elbo(inputs=datapoints,
+                           labels=labels,
+                           criterion=criterion,
+                           sample_nbr=3)
         loss.backward()
         optimizer.step()
         

@@ -57,9 +57,10 @@ iteration = 0
 for epoch in range(100):
     for i, (datapoints, labels) in enumerate(train_loader):
         optimizer.zero_grad()
-        outputs = classifier(datapoints)
-        loss = criterion(outputs, labels)
-        loss += kl_divergence_from_nn(classifier)
+        loss = classifier.sample_elbo(inputs=datapoints,
+                           labels=labels,
+                           criterion=criterion,
+                           sample_nbr=3)
         loss.backward()
         optimizer.step()
         
