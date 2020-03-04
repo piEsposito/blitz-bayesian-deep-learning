@@ -271,7 +271,6 @@ As the expected (mean) of the Q distribution ends up by just scaling the values,
 
 6. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{C^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;=&space;(\log{\mathcall{Q}(w^{(n)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(n)})}&space;))
 
-
 Which is differentiable relative to all of its parameters. 
 
 ## To get the whole cost function at the nth sample:
@@ -283,7 +282,7 @@ Therefore the whole cost function on the nth sample of weights will be:
 
 2. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{L^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;=&space;\mathcall{C^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;&plus;&space;\mathcall{P^{(n)}&space;(w^{(n)},&space;\theta)&space;})
 
-Assuming each sample is representative of the true KL Divergence, we can backpropagate and optimize the mean of each X steps The result is that we are using a Monte-Carlo approach for sampling the gradients and optimizing the network and the nice part is that it actually works.
+We can estimate the true full Cost function by Monte Carlo sampling it (feedforwarding the netwok X times and taking the mean over full loss) and then backpropagate using our estimated value. It works for a low number of experiments per backprop and even for unitary experiments.
 
 ## Some notes and wrap up
 We came to the and of a Bayesian Deep Learning in a Nutshell tutorial. By knowing what is being done here, you can implement your bnn model as you wish. 
