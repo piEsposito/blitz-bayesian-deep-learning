@@ -264,7 +264,7 @@ By assuming a very large n, we could approximate:
 and therefore:
 
 
-5. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{D}_{KL}(&space;\mathcall{Q}(w&space;|&space;\theta)&space;\lVert&space;\mathcall{P}(w)&space;)&space;=&space;\mu_Q&space;*\sum_{i=0}^{n}&space;(\log{\mathcall{Q}(w^{(i)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(i)})}&space;))
+5. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{D}_{KL}(&space;\mathcall{Q}(w&space;|&space;\theta)&space;\lVert&space;\mathcall{P}(w)&space;)&space;=&space;n\mu_Q&space;*\sum_{i=0}^{n}&space;(\log{\mathcall{Q}(w^{(i)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(i)})}&space;))
 
 
 As the expected (mean) of the Q distribution ends up by just scaling the values, we can take it of the equation (as there will be no framework-tracing), we could have a complexity cost of the nth sample as:
