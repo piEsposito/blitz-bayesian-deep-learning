@@ -10,7 +10,7 @@ Our objective is empower people to apply Bayesian Deep Learning by focusing rath
  2. [Documentation](#Documentation)
  3. [A simple example for regression](#A-simple-example-for-regression)
  4. [Bayesian Deep Learning in a Nutshell](#Bayesian-Deep-Learning-in-a-Nutshell)
-  * [First of all, a deterministic NN layer linear-transformation](#First-of-all,-a-deterministic-NN-layer-linear-transformation)
+   1. [First of all, a deterministic NN layer linear-transformation](#First-of-all,-a-deterministic-NN-layer-linear-transformation)
 
 ## Install
 
