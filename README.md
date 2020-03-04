@@ -6,11 +6,11 @@ By using our core weight sampler classes, you can extend and improve this librar
 Our objective is empower people to apply Bayesian Deep Learning by focusing rather on their idea, and not the hard-coding part. 
 
 # Index
- 1. [Install](#Install)
- 2. [Documentation](#Documentation)
- 3. [A simple example for regression](#A-simple-example-for-regression)
- 4. [Bayesian Deep Learning in a Nutshell](#Bayesian-Deep-Learning-in-a-Nutshell)
-   1. [First of all, a deterministic NN layer linear-transformation](#First-of-all,-a-deterministic-NN-layer-linear-transformation)
+ * [Install](#Install)
+ * [Documentation](#Documentation)
+ * [A simple example for regression](#A-simple-example-for-regression)
+ * [Bayesian Deep Learning in a Nutshell](#Bayesian-Deep-Learning-in-a-Nutshell)
+   * [First of all, a deterministic NN layer linear-transformation](#First-of-all,-a-deterministic-NN-layer-linear-transformation)
 
 ## Install
 
@@ -40,7 +40,7 @@ We will now see how can Bayesian Deep Learning be used for regression in order t
 ## Bayesian Deep Learning in a Nutshell
 A very fast explanation of how is uncertainity introduced in Bayesian Neural Networks and how we model its loss in order to objectively improve the confidence over its prediction and reduce the variance without dropout. 
 
-### First of all, a deterministic NN layer linear-transformation
+### First of all, a deterministic NN layer linear transformation
 
 As we know, on deterministic (non bayesian) neural network layers, the trainable parameters correspond directly to the weights used on its linear transformation of the previous one (or the input, if it is the case). It corresponds to the following equation:
 
