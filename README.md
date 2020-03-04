@@ -59,6 +59,8 @@ Knowing if a value will be, surely (or with good probability) on a determinate i
 In order to demonstrate that, we will create a Bayesian Neural Network Regressor for the Boston-house-data toy dataset, trying to create confidence interval (CI) for the houses of which the price we are trying to predict. We will perform some scaling and the CI will be about 75%. It will be interesting to see that about 90% of the CIs predicted are lower than the high limit OR (inclusive) higher than the lower one.
 
 ## Importing the necessary modules
+Despite from the known modules, we will bring from BLiTZ athe `variational_estimator`decorator, which helps us to handle the BayesianLinear layers on the module keeping it fully integrated with the rest of Torch, and, of course, `BayesianLinear`, which is our layer that features weight uncertanity.
+
 ```python
 import torch
 import torch.nn as nn
@@ -67,7 +69,6 @@ import torch.optim as optim
 import numpy as np
 
 from blitz.modules import BayesianLinear
-from blitz.losses import kl_divergence_from_nn
 from blitz.utils import variational_estimator
 
 from sklearn.datasets import load_boston
@@ -76,6 +77,9 @@ from sklearn.model_selection import train_test_split
 ```
 
 ## Loading and scaling data
+
+Nothing new under the sun here, we are importing and standard-scaling the data to help with the training.
+
 ```python
 X, y = load_boston(return_X_y=True)
 X = StandardScaler().fit_transform(X)
@@ -92,6 +96,9 @@ X_test, y_test = torch.tensor(X_test).float(), torch.tensor(y_test).float()
 ```
 
 # Creating our variational regressor class
+
+We can create our class with inhreiting from nn.Module, as we would do with any Torch network. Our decorator introduces the methods to handle the bayesian features, as calculating the complexity cost of the Bayesian Layers and doing many feedforwards (sampling different weights on each one) in order to sample our loss.
+
 ```python
 @variational_estimator
 class BayesianRegressor(nn.Module):
@@ -107,6 +114,10 @@ class BayesianRegressor(nn.Module):
 ```
 
 # Defining a confidence interval evaluating function
+
+This function does create a confidence interval for each prediction on the batch on which we are trying to sample the label value. We then can measure the accuracy of our predictions by seeking how much of the prediciton distributions did actually include the correct label for the datapoint.
+
+
 ```python
 def evaluate_regression(regressor,
                         X,
@@ -125,6 +136,9 @@ def evaluate_regression(regressor,
 ```
 
 # Creating our regressor and loading data
+
+Notice here that we create our `BayesianRegressor` as we would do with other neural networks.
+
 ```python
 regressor = BayesianRegressor(13, 1)
 optimizer = optim.SGD(regressor.parameters(), lr=0.001)
@@ -138,6 +152,11 @@ dataloader_test = torch.utils.data.DataLoader(ds_test, batch_size=16, shuffle=Tr
 ```
 
 ## Our main training and evaluating loop
+
+We do a training loop that only differs from a common torch training by having its loss sampled by its sample_elbo method. All the other stuff can be done normally, as our purpose with BLiTZ is to ease your life on iterating on your data with different Bayesian NNs without trouble.
+
+Here is our very simple training loop:
+
 ```python
 iteration = 0
 for epoch in range(100):
@@ -270,5 +289,7 @@ Maybe you can optimize by doing one optimize step per sample, or by using this M
 
 FYI: **Our Bayesian Layers and utils help to calculate the complexity cost along the layers on each feedforward operation, so don't mind it to much.**
  
+## References:
+ * [Charles Blundell, Julien Cornebise, Koray Kavukcuoglu, and Daan Wierstra. Weight uncertainty in neural networks. arXiv preprint arXiv:1505.05424, 2015.](https://arxiv.org/abs/1505.05424)
  
 ###### Made by Pi Esposito
