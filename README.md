@@ -23,6 +23,7 @@ Our objective is empower people to apply Bayesian Deep Learning by focusing rath
    * [It is also true that there is complexity cost function differentiable along its variables](#It-is-also-true-that-there-is-complexity-cost-function-differentiable-along-its-variables)
    * [To get the whole cost function at the nth sample](#To-get-the-whole-cost-function-at-the-nth-sample)
    * [Some notes and wrap up](#Some-notes-and-wrap-up)
+   * [References](#References)
    
    
 ## Install
