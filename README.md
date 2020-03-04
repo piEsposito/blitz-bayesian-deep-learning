@@ -78,7 +78,9 @@ and
 
 ### It is also true that there is complexity-cost function differentiable along its variables
 
-It is known that the crossentropy loss (and MSE) are differentiable. Therefore if we prove that there is a complexity-cost function that is differentiable, we can leave it to our framework take the derivatives and compute the gradients on the optimization step. 
+It is known that the crossentropy loss (and MSE) are differentiable. Therefore if we prove that there is a complexity-cost function that is differentiable, we can leave it to our framework take the derivatives and compute the gradients on the optimization step.
+
+**The complexity cost is calculated, on the feedforward operation, by each of the Bayesian Layers, (with the layers pre-defined-simpler apriori distribution and its empirical distribution). The sum of the complexity cost of each layer is summed to the loss.**
 
 As proposed in [Weight Uncertainty in Neural Networks paper](https://arxiv.org/abs/1505.05424), we can gather the complexity cost of a distribution by taking the [Kullback-Leibler Divergence](https://jhui.github.io/2017/01/05/Deep-learning-Information-theory/) from it to a much simpler distribution, and by making some approximation, we will can differentiate this function relative to its variables (the distributions):
 
@@ -124,6 +126,8 @@ Therefore the whole cost function on the nth sample of weights will be:
 
 2. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{L^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;=&space;\mathcall{C^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;&plus;&space;\mathcall{P^{(n)}&space;(w^{(n)},&space;\theta)&space;})
 
+### Some notes and wrap-up
+We came to the and of a Bayesian Deep Learning in a Nutshell tutorial. By knowing what is being done here, you can implement your bnn model as you wish. Maybe you can optimize by doing one optimize step per sample, or by using this Monte-Carlo-ish method to gather the loss some times, take its mean and then optimizer. Your move.
 
 ## A simple example for regression
 
