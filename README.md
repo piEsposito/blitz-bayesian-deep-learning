@@ -48,7 +48,15 @@ Documentation for our layers, weight (and prior distribution) sampler and utils:
 
 ## A simple example for regression
 
-We will now see how can Bayesian Deep Learning be used for regression in order to gather confidence interval over our datapoint rather than a prediction, and how this information may be more useful than a low-error predicion.
+(You can see it for your self by running [this example](blitz/examples/bayesian_regression_boston.py) on your machine).
+
+We will now see how can Bayesian Deep Learning be used for regression in order to gather confidence interval over our datapoint rather than a pontual continuous value prediction. Gathering a confidence interval for your prediction may be even a more useful information than a low-error estimation. 
+
+I sustain my argumentation on the fact that, with good/high prob a confidence interval, you can make a more reliable decision than with a very proximal estimation on some contexts: if you are trying to get profit from a trading operation, for example, having a good confidence interval may lead you to know if, at least, the value on which the operation wil procees will be lower (or higher) than some determinate X.
+
+Knowing if a value will be, surely (or with good probability) on a determinate interval can help people on sensible decision more than a very proximal estimation that, if lower or higher than some limit value, may cause loss on a transaction. The point is that, sometimes, knowing if there will be profit may be more useful than measuring it.
+
+In order to demonstrate that, we will create a Bayesian Neural Network Regressor for the Boston-house-data toy dataset, trying to create confidence interval (CI) for the houses of which the price we are trying to predict. We will perform some scaling and the CI will be about 75%. It will be interesting to see that about 90% of the CIs predicted are lower than the high limit OR (inclusive) higher than the lower one.
 
 ## Importing the necessary modules
 ```python
