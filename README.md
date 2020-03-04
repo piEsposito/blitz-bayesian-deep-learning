@@ -9,6 +9,12 @@ Our objective is empower people to apply Bayesian Deep Learning by focusing rath
  * [Install](#Install)
  * [Documentation](#Documentation)
  * [A simple example for regression](#A-simple-example-for-regression)
+   * [Importing the necessary modules](#Importing-the-necessary-modules)
+   * [Loading and scaling data](#Loading-and-scaling-data)
+   * [Creating our variational regressor class](#Creating-our-variational-regressor-class)
+   * [Defining a confidence interval evaluating function](#Defining-a-confidence-interval-evaluating-function)
+   * [Creating our regressor and loading data](#Creating-our-regressor-and-loading-data)
+   * [Our main training and evaluating loop](#Our-main-training-and-evaluating-loop)
  * [Bayesian Deep Learning in a Nutshell](#Bayesian-Deep-Learning-in-a-Nutshell)
    * [First of all, a deterministic NN layer linear-transformation](#First-of-all,-a-deterministic-NN-layer-linear-transformation)
    * [The purpose of Bayesian Layers](#The-purpose-of-Bayesian-Layers)
@@ -43,6 +49,111 @@ Documentation for our layers, weight (and prior distribution) sampler and utils:
 ## A simple example for regression
 
 We will now see how can Bayesian Deep Learning be used for regression in order to gather confidence interval over our datapoint rather than a prediction, and how this information may be more useful than a low-error predicion.
+
+## Importing the necessary modules
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+import numpy as np
+
+from blitz.modules import BayesianLinear
+from blitz.losses import kl_divergence_from_nn
+from blitz.utils import variational_estimator
+
+from sklearn.datasets import load_boston
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+```
+
+## Loading and scaling data
+```python
+X, y = load_boston(return_X_y=True)
+X = StandardScaler().fit_transform(X)
+y = StandardScaler().fit_transform(np.expand_dims(y, -1))
+
+X_train, X_test, y_train, y_test = train_test_split(X,
+                                                    y,
+                                                    test_size=.25,
+                                                    random_state=42)
+
+
+X_train, y_train = torch.tensor(X_train).float(), torch.tensor(y_train).float()
+X_test, y_test = torch.tensor(X_test).float(), torch.tensor(y_test).float()
+```
+
+# Creating our variational regressor class
+```python
+@variational_estimator
+class BayesianRegressor(nn.Module):
+    def __init__(self, input_dim, output_dim):
+        super().__init__()
+        #self.linear = nn.Linear(input_dim, output_dim)
+        self.blinear1 = BayesianLinear(input_dim, 512)
+        self.blinear2 = BayesianLinear(512, output_dim)
+        
+    def forward(self, x):
+        x_ = self.blinear1(x)
+        return self.blinear2(x_)
+```
+
+# Defining a confidence interval evaluating function
+```python
+def evaluate_regression(regressor,
+                        X,
+                        y,
+                        samples = 100,
+                        std_multiplier = 2):
+    preds = [regressor(X) for i in range(samples)]
+    preds = torch.stack(preds)
+    means = preds.mean(axis=0)
+    stds = preds.std(axis=0)
+    ci_upper = means + (std_multiplier * stds)
+    ci_lower = means - (std_multiplier * stds)
+    ic_acc = (ci_lower <= y) * (ci_upper >= y)
+    ic_acc = ic_acc.float().mean()
+    return ic_acc, (ci_upper >= y).float().mean(), (ci_lower <= y).float().mean()
+```
+
+# Creating our regressor and loading data
+```python
+regressor = BayesianRegressor(13, 1)
+optimizer = optim.SGD(regressor.parameters(), lr=0.001)
+criterion = torch.nn.MSELoss()
+
+ds_train = torch.utils.data.TensorDataset(X_train, y_train)
+dataloader_train = torch.utils.data.DataLoader(ds_train, batch_size=16, shuffle=True)
+
+ds_test = torch.utils.data.TensorDataset(X_test, y_test)
+dataloader_test = torch.utils.data.DataLoader(ds_test, batch_size=16, shuffle=True)
+```
+
+## Our main training and evaluating loop
+```python
+iteration = 0
+for epoch in range(100):
+    for i, (datapoints, labels) in enumerate(dataloader_train):
+        optimizer.zero_grad()
+        
+        loss = regressor.sample_elbo(inputs=datapoints,
+                           labels=labels,
+                           criterion=criterion,
+                           sample_nbr=3)
+        loss.backward()
+        optimizer.step()
+        
+        iteration += 1
+        if iteration%100==0:
+            ic_acc, under_ci_upper, over_ci_lower = evaluate_regression(regressor,
+                                                                        X_test,
+                                                                        y_test,
+                                                                        samples=25,
+                                                                        std_multiplier=3)
+            
+            print("CI acc: {:.2f}, CI upper acc: {:.2f}, CI lower acc: {:.2f}".format(ic_acc, under_ci_upper, over_ci_lower))
+            print("Loss: {:.4f}".format(loss))
+```
 
 ## Bayesian Deep Learning in a Nutshell
 A very fast explanation of how is uncertainity introduced in Bayesian Neural Networks and how we model its loss in order to objectively improve the confidence over its prediction and reduce the variance without dropout. 
