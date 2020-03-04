@@ -131,7 +131,7 @@ We came to the and of a Bayesian Deep Learning in a Nutshell tutorial. By knowin
 
 Maybe you can optimize by doing one optimize step per sample, or by using this Monte-Carlo-ish method to gather the loss some times, take its mean and then optimizer. Your move.
 
-FYI: **Our Bayesian Layers and utils help to calculate the complexity cost along the layers on each feedforward operation, so don't mind it to much. **
+FYI: **Our Bayesian Layers and utils help to calculate the complexity cost along the layers on each feedforward operation, so don't mind it to much.**
 
 ## A simple example for regression
 
