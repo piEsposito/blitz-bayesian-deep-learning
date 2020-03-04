@@ -222,16 +222,17 @@ Even tough we have a random multiplier for our weights and biases, it is possibl
 
 1. Let ![equation](https://latex.codecogs.com/gif.latex?\epsilon&space;=&space;\mathcal{N}(0,1))
 2. Let ![equation](https://latex.codecogs.com/gif.latex?\theta&space;=&space;(\rho,&space;\mu))
-3. Let ![equation](https://latex.codecogs.com/gif.latex?f(w,&space;\theta)) be differentiable relative to its variables
+3. Let ![equation](https://latex.codecogs.com/gif.latex?w&space;=&space;\mu&space;&plus;&space;\log{1&space;&plus;&space;e^{\rho}}&space;*&space;\epsilon)
+4. Let ![equation](https://latex.codecogs.com/gif.latex?f(w,&space;\theta)) be differentiable relative to its variables
 
 Therefore:
 
-4. ![equation](https://latex.codecogs.com/gif.latex?\Delta_{\mu}&space;=&space;\frac{\delta&space;f(w,&space;\theta)}{\delta&space;w}&space;&plus;&space;\frac{\delta&space;f(w,&space;\theta)}{\delta&space;\mu})
+5. ![equation](https://latex.codecogs.com/gif.latex?\Delta_{\mu}&space;=&space;\frac{\delta&space;f(w,&space;\theta)}{\delta&space;w}&space;&plus;&space;\frac{\delta&space;f(w,&space;\theta)}{\delta&space;\mu})
 
 and
 
 
-5. ![equation](https://latex.codecogs.com/gif.latex?\Delta_{\rho}&space;=&space;\frac{\delta&space;f(w,&space;\theta)}{\delta&space;w}&space;\frac{\epsilon}{1&space;&plus;&space;e^\rho&space;}&space;&plus;&space;\frac{\delta&space;f(w,&space;\theta)}{\delta&space;\rho})
+6. ![equation](https://latex.codecogs.com/gif.latex?\Delta_{\rho}&space;=&space;\frac{\delta&space;f(w,&space;\theta)}{\delta&space;w}&space;\frac{\epsilon}{1&space;&plus;&space;e^\rho&space;}&space;&plus;&space;\frac{\delta&space;f(w,&space;\theta)}{\delta&space;\rho})
 
 ## It is also true that there is complexity cost function differentiable along its variables
 
