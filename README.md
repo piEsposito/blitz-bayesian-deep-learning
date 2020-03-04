@@ -29,6 +29,12 @@ Documentation for our layers, weight (and prior distribution) sampler and utils:
 ## Bayesian Deep Learning in a Nutshell
 A very fast explanation of how is uncertainity introduced in Bayesian Neural Networks and how we model its loss in order to objectively improve the confidence over its prediction and reduce the variance without dropout. 
 
+### First of all, a deterministic NN layer linear-transformation
+
+As we know, on deterministic (non bayesian) neural network layers, the trainable parameters correspond directly to the weights used on its linear transformation of the previous one (or the input, if it is the case). It corresponds to the following equation. (Z correspond to the activated-output of the layer i:
+
+
+![equation](https://latex.codecogs.com/gif.latex?a^{(i&plus;1)}&space;=&space;W^{(i&plus;1)}\cdot&space;z^{(i)}&space;&plus;&space;b^{(i&plus;1)})
 
 ## A simple example for regression
 
