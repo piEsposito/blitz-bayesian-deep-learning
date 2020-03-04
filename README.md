@@ -253,12 +253,12 @@ Therefore, for each scalar on the W sampled matrix:
 
 
 
-3. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{D}_{KL}(&space;\mathcall{Q}(w&space;|&space;\theta)&space;\lVert&space;\mathcall{P}(w)&space;)&space;=&space;\sum_{i=0}^{\infty}&space;{Q}(w^{(i)}&space;|&space;\theta)*&space;(\log{\mathcall{Q}(w^{(i)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(i)})}&space;))
+3. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{D}_{KL}(&space;\mathcall{Q}(w&space;|&space;\theta)&space;\lVert&space;\mathcall{P}(w)&space;)&space;=&space;\lim_{n\to\infty}1/n\sum_{i=0}^{n}&space;{Q}(w^{(i)}&space;|&space;\theta)*&space;(\log{\mathcall{Q}(w^{(i)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(i)})}&space;))
 
 
 By assuming a very large n, we could approximate:
 
-4. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{D}_{KL}(&space;\mathcall{Q}(w&space;|&space;\theta)&space;\lVert&space;\mathcall{P}(w)&space;)&space;=&space;\lim_{n\to\infty}1/n\sum_{i=0}^{n}&space;{Q}(w^{(i)}&space;|&space;\theta)*&space;(\log{\mathcall{Q}(w^{(i)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(i)})}&space;))
+4. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{D}_{KL}(&space;\mathcall{Q}(w&space;|&space;\theta)&space;\lVert&space;\mathcall{P}(w)&space;)&space;=&space;1/n\sum_{i=0}^{n}&space;{Q}(w^{(i)}&space;|&space;\theta)*&space;(\log{\mathcall{Q}(w^{(i)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(i)})}&space;))
 
 
 and therefore:
@@ -267,12 +267,12 @@ and therefore:
 5. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{D}_{KL}(&space;\mathcall{Q}(w&space;|&space;\theta)&space;\lVert&space;\mathcall{P}(w)&space;)&space;=&space;\mu_Q&space;*\sum_{i=0}^{n}&space;(\log{\mathcall{Q}(w^{(i)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(i)})}&space;))
 
 
-As the expected (mean) of the Q distribution ends up by just scaling the values, we can take it of the equation (as there will be no framework-tracing), we could have a complexity cost of the nth sample as:
+As the expected (mean) of the Q distribution ends up by just scaling the values, we can take it out of the equation (as there will be no framework-tracing). Have a complexity cost of the nth sample as:
 
 6. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{C^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;=&space;(\log{\mathcall{Q}(w^{(n)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(n)})}&space;))
 
 
-Which is differentiable relative to all of its parameters.
+Which is differentiable relative to all of its parameters. 
 
 ## To get the whole cost function at the nth sample:
 
@@ -282,6 +282,8 @@ Which is differentiable relative to all of its parameters.
 Therefore the whole cost function on the nth sample of weights will be:
 
 2. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{L^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;=&space;\mathcall{C^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;&plus;&space;\mathcall{P^{(n)}&space;(w^{(n)},&space;\theta)&space;})
+
+Assuming each sample is representative of the true KL Divergence, we can backpropagate and optimize the mean of each X steps The result is that we are using a Monte-Carlo approach for sampling the gradients and optimizing the network and the nice part is that it actually works.
 
 ## Some notes and wrap up
 We came to the and of a Bayesian Deep Learning in a Nutshell tutorial. By knowing what is being done here, you can implement your bnn model as you wish. 
