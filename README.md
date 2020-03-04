@@ -127,7 +127,11 @@ Therefore the whole cost function on the nth sample of weights will be:
 2. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{L^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;=&space;\mathcall{C^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;&plus;&space;\mathcall{P^{(n)}&space;(w^{(n)},&space;\theta)&space;})
 
 ### Some notes and wrap-up
-We came to the and of a Bayesian Deep Learning in a Nutshell tutorial. By knowing what is being done here, you can implement your bnn model as you wish. Maybe you can optimize by doing one optimize step per sample, or by using this Monte-Carlo-ish method to gather the loss some times, take its mean and then optimizer. Your move.
+We came to the and of a Bayesian Deep Learning in a Nutshell tutorial. By knowing what is being done here, you can implement your bnn model as you wish. 
+
+Maybe you can optimize by doing one optimize step per sample, or by using this Monte-Carlo-ish method to gather the loss some times, take its mean and then optimizer. Your move.
+
+FYI: **Our Bayesian Layers and utils help to calculate the complexity cost along the layers on each feedforward operation, so don't mind it to much. **
 
 ## A simple example for regression
 
