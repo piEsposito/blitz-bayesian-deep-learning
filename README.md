@@ -31,10 +31,51 @@ A very fast explanation of how is uncertainity introduced in Bayesian Neural Net
 
 ### First of all, a deterministic NN layer linear-transformation
 
-As we know, on deterministic (non bayesian) neural network layers, the trainable parameters correspond directly to the weights used on its linear transformation of the previous one (or the input, if it is the case). It corresponds to the following equation. (Z correspond to the activated-output of the layer i:
+As we know, on deterministic (non bayesian) neural network layers, the trainable parameters correspond directly to the weights used on its linear transformation of the previous one (or the input, if it is the case). It corresponds to the following equation:
 
 
-![equation](https://latex.codecogs.com/gif.latex?a^{(i&plus;1)}&space;=&space;W^{(i&plus;1)}\cdot&space;z^{(i)}&space;&plus;&space;b^{(i&plus;1)})
+![equation](https://latex.codecogs.com/gif.latex?a^{(i&plus;1)}&space;=&space;W^{(i&plus;1)}\cdot&space;z^{(i)}&space;&plus;&space;b^{(i&plus;1)}) 
+
+*(Z correspond to the activated-output of the layer i)*
+
+### The purpose of Bayesian Layers
+
+Bayesian layers seek to introduce uncertainity on its weights by sampling them from a distribution parametrized by trainable variables on each feedforward operation. 
+
+This allows we not just to optimize the performance metrics of the model, but also gather the uncertainity of the network predictions over a specific datapoint (by sampling it much times and measuring the dispersion) and aimingly reduce as much as possible the variance of the network over the prediction, making possible to know how much of incertainity we still have over the label if we try to model it in function of our specific datapoint.
+
+### Weight sampling on Bayesian Layers
+To do so, on each feedforward operation we sample the parameters of the linear transformation with the following equations (where **ρ** parametrizes the standard deviation and **μ** parametrizes the mean for the samples linear transformation parameters) :
+
+For the weights:
+
+![equation](https://latex.codecogs.com/gif.latex?W^{(i)}_{(n)}&space;=&space;\mathcal{N}(0,1)&space;*&space;log(1&space;&plus;&space;\rho^{(i)}&space;)&space;&plus;&space;\mu^{(i)})
+
+*Where the sampled W corresponds to the weights used on the linear transformation for the ith layer on the nth sample.*
+
+For the biases:
+
+![equation](https://latex.codecogs.com/gif.latex?b^{(i)}_{(n)}&space;=&space;\mathcal{N}(0,1)&space;*&space;log(1&space;&plus;&space;\rho^{(i)}&space;)&space;&plus;&space;\mu^{(i)})
+
+*Where the sampled b corresponds to the biases used on the linear transformation for the ith layer on the nth sample.*
+
+### It is possible to optimize our trainable weights:
+
+Even tough we have a random multiplier for our weights and biases, it is possible to optimize them by, given some differentiable function of the weights sampled and trainable parameters (in our case, the loss), summing the derivative of the function relative to both of them:
+
+1. Let ![equation](https://latex.codecogs.com/gif.latex?\epsilon&space;=&space;\mathcal{N}(0,1))
+2. Let ![equation](https://latex.codecogs.com/gif.latex?\theta&space;=&space;(\rho,&space;\mu))
+3. Let ![equation](https://latex.codecogs.com/gif.latex?f(w,&space;\theta)) be differentiable relative to its variables
+
+Therefore:
+
+4. ![equation](https://latex.codecogs.com/gif.latex?\Delta_{\mu}&space;=&space;\frac{\delta&space;f(w,&space;\theta)}{\delta&space;w}&space;&plus;&space;\frac{\delta&space;f(w,&space;\theta)}{\delta&space;\mu})
+
+and
+
+
+5. ![equation](https://latex.codecogs.com/gif.latex?\Delta_{\rho}&space;=&space;\frac{\delta&space;f(w,&space;\theta)}{\delta&space;w}&space;\frac{\epsilon}{1&space;&plus;&space;e^\rho&space;}&space;&plus;&space;\frac{\delta&space;f(w,&space;\theta)}{\delta&space;\rho})
+
 
 ## A simple example for regression
 
