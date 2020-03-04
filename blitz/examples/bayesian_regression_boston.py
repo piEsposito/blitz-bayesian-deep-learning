@@ -5,7 +5,6 @@ import torch.optim as optim
 import numpy as np
 
 from blitz.modules import BayesianLinear
-from blitz.losses import kl_divergence_from_nn
 from blitz.utils import variational_estimator
 
 from sklearn.datasets import load_boston
