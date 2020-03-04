@@ -222,7 +222,7 @@ Even tough we have a random multiplier for our weights and biases, it is possibl
 
 1. Let ![equation](https://latex.codecogs.com/gif.latex?\epsilon&space;=&space;\mathcal{N}(0,1))
 2. Let ![equation](https://latex.codecogs.com/gif.latex?\theta&space;=&space;(\rho,&space;\mu))
-3. Let ![equation](https://latex.codecogs.com/gif.latex?w&space;=&space;\mu&space;&plus;&space;\log{1&space;&plus;&space;e^{\rho}}&space;*&space;\epsilon)
+3. Let ![equation](https://latex.codecogs.com/gif.latex?w&space;=&space;\mu&space;&plus;&space;\log({1&space;&plus;&space;e^{\rho}})&space;*&space;\epsilon)
 4. Let ![equation](https://latex.codecogs.com/gif.latex?f(w,&space;\theta)) be differentiable relative to its variables
 
 Therefore:
