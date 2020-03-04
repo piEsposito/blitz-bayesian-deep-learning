@@ -76,6 +76,54 @@ and
 
 5. ![equation](https://latex.codecogs.com/gif.latex?\Delta_{\rho}&space;=&space;\frac{\delta&space;f(w,&space;\theta)}{\delta&space;w}&space;\frac{\epsilon}{1&space;&plus;&space;e^\rho&space;}&space;&plus;&space;\frac{\delta&space;f(w,&space;\theta)}{\delta&space;\rho})
 
+### It is also true that there is complexity-cost function differentiable along its variables
+
+It is known that the crossentropy loss (and MSE) are differentiable. Therefore if we prove that there is a complexity-cost function that is differentiable, we can leave it to our framework take the derivatives and compute the gradients on the optimization step. 
+
+As proposed in [Weight Uncertainty in Neural Networks paper](https://arxiv.org/abs/1505.05424), we can gather the complexity cost of a distribution by taking the [Kullback-Leibler Divergence](https://jhui.github.io/2017/01/05/Deep-learning-Information-theory/) from it to a much simpler distribution, and by making some approximation, we will can differentiate this function relative to its variables (the distributions):
+
+1. Let ![equation](https://latex.codecogs.com/gif.latex?\mathcall{P}(w)) be a low-entropy distribution pdf set by hand, which will be assumed as an "a priori" distribution for the weights
+
+2. Let ![equation](https://latex.codecogs.com/gif.latex?\mathcall{Q}(w&space;|&space;\theta)) be the a posteriori empirical distribution pdf for our sampled weights, given its parameters.
+
+
+
+
+Therefore, for each scalar on the W sampled matrix:
+
+
+
+
+3. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{D}_{KL}(&space;\mathcall{Q}(w&space;|&space;\theta)&space;\lVert&space;\mathcall{P}(w)&space;)&space;=&space;\sum_{i=0}^{\infty}&space;{Q}(w^{(i)}&space;|&space;\theta)*&space;(\log{\mathcall{Q}(w^{(i)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(i)})}&space;))
+
+
+By assuming a very large n, we could approximate:
+
+4. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{D}_{KL}(&space;\mathcall{Q}(w&space;|&space;\theta)&space;\lVert&space;\mathcall{P}(w)&space;)&space;=&space;\sum_{i=0}^{n}&space;{Q}(w^{(i)}&space;|&space;\theta)*&space;(\log{\mathcall{Q}(w^{(i)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(i)})}&space;))
+
+
+and therefore:
+
+
+5. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{D}_{KL}(&space;\mathcall{Q}(w&space;|&space;\theta)&space;\lVert&space;\mathcall{P}(w)&space;)&space;=&space;\mu_Q&space;*\sum_{i=0}^{n}&space;(\log{\mathcall{Q}(w^{(i)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(i)})}&space;))
+
+
+As the expected (mean) of the Q distribution ends up by just scaling the values, we can take it of the equation (as there will be no framework-tracing), we could have a complexity cost of the nth sample as:
+
+6. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{C^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;=&space;(\log{\mathcall{Q}(w^{(n)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(n)})}&space;))
+
+
+Which is differentiable relative to all of its parameters.
+
+### There for, to get the whole cost function at the nth sample:
+
+1. Let a performance (fit to data) function be: ![equation](https://latex.codecogs.com/gif.latex?\mathcall{P^{(n)}&space;(w^{(n)},&space;\theta)})
+
+
+Therefore the whole cost function on the nth sample of weights will be:
+
+2. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{L^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;=&space;\mathcall{C^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;&plus;&space;\mathcall{P^{(n)}&space;(w^{(n)},&space;\theta)&space;})
+
 
 ## A simple example for regression
 
