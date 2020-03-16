@@ -50,7 +50,8 @@ class BayesianCNN(nn.Module):
         x_ = self.fc1(x_)
         return self.fc2(x_)
 
-classifier = BayesianCNN()
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+classifier = BayesianCNN().to(device)
 optimizer = optim.Adam(classifier.parameters(), lr=0.001)
 criterion = torch.nn.CrossEntropyLoss()
 
@@ -58,8 +59,8 @@ iteration = 0
 for epoch in range(100):
     for i, (datapoints, labels) in enumerate(train_loader):
         optimizer.zero_grad()
-        loss = classifier.sample_elbo(inputs=datapoints,
-                           labels=labels,
+        loss = classifier.sample_elbo(inputs=datapoints.to(device),
+                           labels=labels.to(device),
                            criterion=criterion,
                            sample_nbr=3)
         loss.backward()
@@ -72,8 +73,8 @@ for epoch in range(100):
             with torch.no_grad():
                 for data in test_loader:
                     images, labels = data
-                    outputs = classifier(images)
+                    outputs = classifier(images.to(device))
                     _, predicted = torch.max(outputs.data, 1)
                     total += labels.size(0)
-                    correct += (predicted == labels).sum().item()
+                    correct += (predicted == labels.to(device)).sum().item()
             print('Iteration: {} | Accuracy of the network on the 10000 test images: {} %'.format(str(iteration) ,str(100 * correct / total)))
