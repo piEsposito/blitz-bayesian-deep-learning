@@ -33,7 +33,8 @@ def variational_estimator(nn_class):
                     inputs,
                     labels,
                     criterion,
-                    sample_nbr):
+                    sample_nbr,
+                    complexity_cost_weight=1):
 
         """ Samples the ELBO Loss for a batch of data, consisting of inputs and corresponding-by-index labels
 
@@ -60,7 +61,7 @@ def variational_estimator(nn_class):
         for _ in range(sample_nbr):
             outputs = self(inputs)
             loss = criterion(outputs, labels)
-            loss += self.nn_kl_divergence()
+            loss += self.nn_kl_divergence() * complexity_cost_weight
         return loss / sample_nbr
     
     setattr(nn_class, "sample_elbo", sample_elbo)
