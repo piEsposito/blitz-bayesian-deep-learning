@@ -32,6 +32,8 @@ Our objective is empower people to apply Bayesian Deep Learning by focusing rath
 To install it, just git-clone it and pip-install it locally:
 
 ```
+conda create -n blitz python=3.6
+conda activate blitz
 git clone https://github.com/piEsposito/blitz-bayesian-deep-learning.git
 cd blitz-bayesian-deep-learning
 pip install .
