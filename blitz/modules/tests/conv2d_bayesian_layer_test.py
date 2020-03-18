@@ -15,7 +15,6 @@ class TestConv2DBayesian(unittest.TestCase):
 
     def test_weights_shape(self):
        #check if weights shape is the expected
-       
        bconv = BayesianConv2d(in_channels=3,
                               out_channels=3,
                               kernel_size=(3,3))
@@ -25,6 +24,25 @@ class TestConv2DBayesian(unittest.TestCase):
                         kernel_size=(3,3))
 
        to_feed = torch.ones((1, 3, 25, 25))
+
+       infer1 = bconv(to_feed)
+       infer2 = conv(to_feed)
+       
+       self.assertEqual(infer1.shape, infer2.shape)
+       pass
+
+    def test_weights_shape_cuda(self):
+       #check if weights shape is the expected
+       device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+       bconv = BayesianConv2d(in_channels=3,
+                              out_channels=3,
+                              kernel_size=(3,3)).to(device)
+
+       conv = nn.Conv2d(in_channels=3,
+                        out_channels=3,
+                        kernel_size=(3,3)).to(device)
+
+       to_feed = torch.ones((1, 3, 25, 25)).to(device)
 
        infer1 = bconv(to_feed)
        infer2 = conv(to_feed)
