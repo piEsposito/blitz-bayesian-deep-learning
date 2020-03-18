@@ -53,8 +53,8 @@ def evaluate_regression(regressor,
     ic_acc = ic_acc.float().mean()
     return ic_acc, (ci_upper >= y).float().mean(), (ci_lower <= y).float().mean()
 
-
-regressor = BayesianRegressor(13, 1)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+regressor = BayesianRegressor(13, 1).to(device)
 optimizer = optim.SGD(regressor.parameters(), lr=0.001)
 criterion = torch.nn.MSELoss()
 
@@ -70,8 +70,8 @@ for epoch in range(100):
     for i, (datapoints, labels) in enumerate(dataloader_train):
         optimizer.zero_grad()
         
-        loss = regressor.sample_elbo(inputs=datapoints,
-                           labels=labels,
+        loss = regressor.sample_elbo(inputs=datapoints.to(device),
+                           labels=labels.to(device),
                            criterion=criterion,
                            sample_nbr=3)
         loss.backward()
@@ -80,8 +80,8 @@ for epoch in range(100):
         iteration += 1
         if iteration%100==0:
             ic_acc, under_ci_upper, over_ci_lower = evaluate_regression(regressor,
-                                                                        X_test,
-                                                                        y_test,
+                                                                        X_test.to(device),
+                                                                        y_test.to(device),
                                                                         samples=25,
                                                                         std_multiplier=3)
             

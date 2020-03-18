@@ -3,12 +3,14 @@ import numpy as np
 import torch.nn as nn
 import torch.functional as F
 
-class GaussianVariational:
+class GaussianVariational(nn.Module):
     #Samples weights for variational inference as in Weights Uncertainity on Neural Networks (Bayes by backprop paper)
     #Calculates the variational posterior part of the complexity part of the loss
     def __init__(self, mu, rho):
-        self.mu = mu
-        self.rho = rho
+        super().__init__()
+
+        self.mu = nn.Parameter(mu)
+        self.rho = nn.Parameter(rho)
         self.w = None
         self.sigma = None
         self.pi = np.pi
@@ -24,8 +26,9 @@ class GaussianVariational:
         returns:
             torch.tensor with same shape as self.mu and self.rho
         """
-        epsilon = self.normal.sample(self.mu.size())
-        self.sigma = torch.log(1 + torch.exp(self.rho))
+        device = self.mu.device
+        epsilon = self.normal.sample(self.mu.size()).to(device)
+        self.sigma = torch.log(1 + torch.exp(self.rho)).to(device)
         self.w = self.mu + self.sigma * epsilon
         return self.w
 
@@ -44,9 +47,11 @@ class GaussianVariational:
         log_posteriors =  -log_sqrt2pi - self.sigma - (((self.w - self.mu) ** 2)/(2 * self.sigma ** 2))
         return log_posteriors.mean()
 
-class ScaleMixturePrior:
+class ScaleMixturePrior(nn.Module):
     #Calculates a Scale Mixture Prior distribution for the prior part of the complexity cost on Bayes by Backprop paper
     def __init__(self, pi, sigma1, sigma2):
+        super().__init__()
+
         self.pi = pi
         self.sigma1 = sigma1
         self.sigma2 = sigma2

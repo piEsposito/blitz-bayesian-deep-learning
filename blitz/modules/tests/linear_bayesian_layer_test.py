@@ -69,13 +69,26 @@ class TestLinearBayesian(unittest.TestCase):
         self.assertEqual(isinstance(blinear, (nn.Module)), True)
         self.assertEqual(isinstance(blinear, (BayesianModule)), True)
 
-    def test_sequential(self):
+    def test_sequential_cpu(self):
         #check if we can create sequential models chaning our Bayesian Linear layers
         model = nn.Sequential(BayesianLinear(10, 10),
                               nn.Linear(10, 15),
                               BayesianLinear(15,10))
 
         to_feed = torch.ones((1, 10))
+        #if this works, the test will pass
+        result = model(to_feed)
+        pass
+    
+    def test_sequential_cuda(self):
+        #check if we can create sequential models chaning our Bayesian Linear layers
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+        model = nn.Sequential(BayesianLinear(10, 10),
+                              nn.Linear(10, 15),
+                              BayesianLinear(15,10)).to(device)
+
+        to_feed = torch.ones((1, 10)).to(device)
         #if this works, the test will pass
         result = model(to_feed)
         pass
