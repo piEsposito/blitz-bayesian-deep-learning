@@ -33,7 +33,7 @@ To install it, just git-clone it and pip-install it locally:
 
 ```
 git clone https://github.com/piEsposito/blitz-bayesian-deep-learning.git
-cd blitz
+cd blitz-bayesian-deep-learning
 pip install .
 ```
 
