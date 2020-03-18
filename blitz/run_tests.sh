@@ -1,3 +1,3 @@
 eval "$(conda shell.bash hook)"
-conda activate torchenv;
+conda activate blitz;
 python -m unittest discover -p '*_test.py' -s '.'
