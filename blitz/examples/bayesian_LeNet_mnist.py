@@ -31,24 +31,22 @@ test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
 class BayesianCNN(nn.Module):
     def __init__(self):
         super().__init__()
-        #self.linear = nn.Linear(input_dim, output_dim)
-        self.conv_net = nn.Sequential(BayesianConv2d(in_channels=1,
-                                                out_channels=32,
-                                                kernel_size=(3,3)),
-                                     nn.ReLU(),
-                                     BayesianConv2d(in_channels=32,
-                                                out_channels=64,
-                                                kernel_size=(3,3)),
-                                     nn.ReLU())
-        
-        self.fc1 = BayesianLinear(36864, 128)
-        self.fc2 = BayesianLinear(128, 10)
-        
+        self.conv1 = BayesianConv2d(1, 6, (5,5))
+        self.conv2 = BayesianConv2d(6, 16, (5,5))
+        self.fc1   = BayesianLinear(256, 120)
+        self.fc2   = BayesianLinear(120, 84)
+        self.fc3   = BayesianLinear(84, 10)
+
     def forward(self, x):
-        x_ = self.conv_net(x)
-        x_ = x_.view(x_.size(0), -1)
-        x_ = self.fc1(x_)
-        return self.fc2(x_)
+        out = F.relu(self.conv1(x))
+        out = F.max_pool2d(out, 2)
+        out = F.relu(self.conv2(out))
+        out = F.max_pool2d(out, 2)
+        out = out.view(out.size(0), -1)
+        out = F.relu(self.fc1(out))
+        out = F.relu(self.fc2(out))
+        out = self.fc3(out)
+        return out
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 classifier = BayesianCNN().to(device)
