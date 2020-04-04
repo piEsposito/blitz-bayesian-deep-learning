@@ -297,4 +297,7 @@ FYI: **Our Bayesian Layers and utils help to calculate the complexity cost along
 ## References:
  * [Charles Blundell, Julien Cornebise, Koray Kavukcuoglu, and Daan Wierstra. Weight uncertainty in neural networks. arXiv preprint arXiv:1505.05424, 2015.](https://arxiv.org/abs/1505.05424)
  
+ 
+###### Special thanks to Intel Student Ambassador program
+
 ###### Made by Pi Esposito
