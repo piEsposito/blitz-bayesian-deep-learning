@@ -4,6 +4,7 @@ They all inherit from torch.nn.Module
   * [BayesianModule](#class-BayesianModule)
   * [BayesianLinear](#class-BayesianLinear)
   * [BayesianConv2d](#class-BayesianConv2d)
+  * [BayesianLSTM](#class-BayesianLSTM)
 
 ---
 ## class BayesianModule(torch.nn.Module)
@@ -92,3 +93,42 @@ DESCRIPTION
        * x = torch.tensor corresponding to the datapoints tensor to be feedforwarded
     
 ---
+
+## class BayesianLSTM
+### blitz.modules.BayesianLSTM(in_features, out_features, bias=True, prior_sigma_1 = 1, prior_sigma_2 = 0.002, prior_pi = 0.5, freeze = False)
+
+Bayesian LSTM layer, implements the LSTM layer using the weight uncertainty tools proposed on Weight Uncertainity on Neural Networks (Bayes by Backprop paper). 
+
+Creates weight samplers of the class GaussianVariational for the weights and biases to be used on its feedforward ops.
+
+Inherits from BayesianModule
+
+#### Parameters:
+  * in_features int -> Number nodes of the information to be feedforwarded
+  * out_features int -> Number of out nodes of the layer
+  * bias bool ->  wheter the model will have biases
+  * prior_sigma_1 float -> sigma of one of the prior w distributions to mixture
+  * prior_sigma_2 float -> sigma of one of the prior w distributions to mixture
+  * prior_pi float -> factor to scale the gaussian mixture of the model prior distribution
+  * freeze -> wheter the model is instaced as frozen (will use deterministic weights on the feedforward op)
+  
+#### Methods:
+  * forward(x, ):
+      
+      Performs a feedforward operation with sampled weights. If the model is frozen uses only the expected values.
+      
+      Returns  tuple of format (torch.tensor, (torch.tensor, torch.tensor)), representing the output and hidden state of the LSTM layer
+      
+      Description
+      ##### Parameters
+       * x - torch.tensor corresponding to the datapoints tensor to be feedforwarded
+       * hidden_states - None or tupl of the format (torch.tensor, torch.tensor), representing the hidden states of the network. Internally, if None, consider zeros of the proper format).
+      
+   * sample_weights():
+      
+      Assings internally its weights to be used on feedforward operations by sampling it from its GaussianVariational
+      
+   * get_frozen_weights():
+   
+      Assings internally for its weights deterministaclly the mean of its GaussianVariational sampler.
+      
