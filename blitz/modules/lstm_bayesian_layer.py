@@ -75,7 +75,15 @@ class BayesianLSTM(BayesianModule):
         
         self.log_prior = self.weight_ih_prior_dist.log_prior(self.weight_ih) + b_log_prior + self.weight_hh_prior_dist.log_prior(self.weight_hh)
         
-            
+    def get_frozen_weights(self):
+        
+        #get all deterministic weights
+        self.weight_ih = self.weight_ih_mu
+        self.weight_hh = self.weight_hh_mu
+        if self.use_bias:
+            self.bias = self.bias_mu
+        else:
+            self.bias = torch.zeros((self.out_features * 4))
     
     def forward(self,
                 x,
@@ -91,8 +99,11 @@ class BayesianLSTM(BayesianModule):
                         torch.zeros(self.out_features).to(x.device))
         else:
             h_t, c_t = hidden_states
-            
-        self.sample_weights()
+        
+        if self.freeze:
+            self.get_frozen_weights()
+        else:
+            self.sample_weights()
         
         #simplifying our out features, and hidden seq list
         HS = self.out_features
@@ -118,4 +129,3 @@ class BayesianLSTM(BayesianModule):
         hidden_seq = hidden_seq.transpose(0, 1).contiguous()
         
         return hidden_seq, (h_t, c_t)
-        
