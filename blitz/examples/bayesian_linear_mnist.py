@@ -9,6 +9,7 @@ import torchvision.transforms as transforms
 from blitz.modules import BayesianLinear
 from blitz.losses import kl_divergence_from_nn
 from blitz.utils import variational_estimator
+from blitz.utils.minibatch_weighting import minibatch_weight
 
 #create dataloaders
 train_dataset = dsets.MNIST(root="./data",
@@ -51,12 +52,17 @@ iteration = 0
 for epoch in range(5):
     for i, (datapoints, labels) in enumerate(train_loader):
         optimizer.zero_grad()
-        
-        loss = classifier.sample_elbo(inputs=datapoints.to(device),
-                           labels=labels.to(device),
-                           criterion=criterion,
-                           sample_nbr=3)
-        loss.backward()
+
+        pi_weight = minibatch_weight(batch_idx=i, num_batches=32)
+
+        loss = classifier.sample_elbo(
+            inputs=datapoints.to(device),
+            labels=labels.to(device),
+            criterion=criterion,
+            sample_nbr=3,
+            complexity_cost_weight=pi_weight
+        )
+
         optimizer.step()
         
         iteration += 1
