@@ -13,4 +13,4 @@ def minibatch_weight(batch_idx, num_batches):
         num_batches: int -> the total number of batches
     """
 
-    return 2 ^ (num_batches - batch_idx) / (2 ^ num_batches - batch_idx)
+    return 2 ** (num_batches - batch_idx) / (2 ** num_batches - batch_idx)
