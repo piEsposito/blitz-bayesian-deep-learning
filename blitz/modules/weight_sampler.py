@@ -44,7 +44,7 @@ class GaussianVariational(nn.Module):
         assert (self.w is not None), "You can only have a log posterior for W if you've already sampled it"
 
         log_sqrt2pi = np.log(np.sqrt(2*self.pi))
-        log_posteriors =  -log_sqrt2pi - self.sigma - (((self.w - self.mu) ** 2)/(2 * self.sigma ** 2))
+        log_posteriors =  -log_sqrt2pi - torch.log(self.sigma) - (((self.w - self.mu) ** 2)/(2 * self.sigma ** 2))
         return log_posteriors.mean()
 
 class ScaleMixturePrior(nn.Module):
