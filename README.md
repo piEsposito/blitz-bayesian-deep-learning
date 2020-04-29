@@ -28,8 +28,13 @@ Our objective is empower people to apply Bayesian Deep Learning by focusing rath
    
 ## Install
 
+To install BLiTZ you can use pip command:
 
-To install it, just git-clone it and pip-install it locally:
+```
+pip install blitz-bayesian-pytorch
+```
+
+You can also git-clone it and pip-install it locally:
 
 ```
 conda create -n blitz python=3.6
@@ -38,8 +43,6 @@ git clone https://github.com/piEsposito/blitz-bayesian-deep-learning.git
 cd blitz-bayesian-deep-learning
 pip install .
 ```
-
-Later on, we will submit it to **Pypi**.
 
 ## Documentation
 
