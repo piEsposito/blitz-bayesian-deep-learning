@@ -11,10 +11,11 @@ class GaussianVariational(nn.Module):
 
         self.mu = nn.Parameter(mu)
         self.rho = nn.Parameter(rho)
-        self.w = None
+        self.register_buffer('eps_w', torch.Tensor(self.mu.shape))
         self.sigma = None
+        self.w = None
         self.pi = np.pi
-        self.normal = torch.distributions.Normal(0, 1)
+        #self.normal = torch.distributions.Normal(0, 1)
 
     def sample(self):
         """
@@ -26,10 +27,10 @@ class GaussianVariational(nn.Module):
         returns:
             torch.tensor with same shape as self.mu and self.rho
         """
-        device = self.mu.device
-        epsilon = self.normal.sample(self.mu.size()).to(device)
-        self.sigma = torch.log(1 + torch.exp(self.rho)).to(device)
-        self.w = self.mu + self.sigma * epsilon
+
+        self.eps_w.normal_()
+        self.sigma = torch.log1p(torch.exp(self.rho))
+        self.w = self.mu + self.sigma * self.eps_w
         return self.w
 
     def log_posterior(self):
