@@ -28,7 +28,7 @@ class GaussianVariational(nn.Module):
             torch.tensor with same shape as self.mu and self.rho
         """
 
-        self.eps_w.normal_()
+        self.eps_w.data.normal_()
         self.sigma = torch.log1p(torch.exp(self.rho))
         self.w = self.mu + self.sigma * self.eps_w
         return self.w
