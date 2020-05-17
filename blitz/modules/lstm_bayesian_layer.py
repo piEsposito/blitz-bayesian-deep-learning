@@ -29,6 +29,8 @@ class BayesianLSTM(BayesianModule):
                  prior_sigma_1 = 1,
                  prior_sigma_2 = 0.002,
                  prior_pi = 0.5,
+                 posterior_mu_init = 0,
+                 posterior_rho_init = -6.0,
                  freeze = False):
         
         super().__init__()
@@ -37,25 +39,28 @@ class BayesianLSTM(BayesianModule):
         self.use_bias = bias
         self.freeze = freeze
         
+        self.posterior_mu_init = posterior_mu_init
+        self.posterior_rho_init = posterior_rho_init
+        
         self.prior_sigma_1 = prior_sigma_1
         self.prior_sigma_2 = prior_sigma_2
         self.prior_pi = prior_pi
         
         # Variational weight parameters and sample for weight ih
-        self.weight_ih_mu = nn.Parameter(torch.Tensor(in_features, out_features * 4).uniform_(-0.2, 0.2))
-        self.weight_ih_rho = nn.Parameter(torch.Tensor(in_features, out_features * 4).uniform_(-5, -4))
+        self.weight_ih_mu = nn.Parameter(torch.Tensor(in_features, out_features * 4).normal_(posterior_mu_init, 0.1))
+        self.weight_ih_rho = nn.Parameter(torch.Tensor(in_features, out_features * 4).normal_(posterior_rho_init, 0.1))
         self.weight_ih_sampler = GaussianVariational(self.weight_ih_mu, self.weight_ih_rho)
         self.weight_ih = None
         
         # Variational weight parameters and sample for weight hh
-        self.weight_hh_mu = nn.Parameter(torch.Tensor(out_features, out_features * 4).uniform_(-0.2, 0.2))
-        self.weight_hh_rho = nn.Parameter(torch.Tensor(out_features, out_features * 4).uniform_(-5, -4))
+        self.weight_hh_mu = nn.Parameter(torch.Tensor(out_features, out_features * 4).normal_(posterior_mu_init, 0.1))
+        self.weight_hh_rho = nn.Parameter(torch.Tensor(out_features, out_features * 4).normal_(posterior_rho_init, 0.1))
         self.weight_hh_sampler = GaussianVariational(self.weight_hh_mu, self.weight_hh_rho)
         self.weight_hh = None
         
         # Variational weight parameters and sample for bias
-        self.bias_mu = nn.Parameter(torch.Tensor(out_features * 4).uniform_(-0.2, 0.2))
-        self.bias_rho = nn.Parameter(torch.Tensor(out_features * 4).uniform_(-5, -4))
+        self.bias_mu = nn.Parameter(torch.Tensor(out_features * 4).normal_(posterior_mu_init, 0.1))
+        self.bias_rho = nn.Parameter(torch.Tensor(out_features * 4).normal_(posterior_rho_init, 0.1))
         self.bias_sampler = GaussianVariational(self.bias_mu, self.bias_rho)
         self.bias=None
         
