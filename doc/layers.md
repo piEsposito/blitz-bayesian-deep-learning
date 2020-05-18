@@ -5,6 +5,7 @@ They all inherit from torch.nn.Module
   * [BayesianLinear](#class-BayesianLinear)
   * [BayesianConv2d](#class-BayesianConv2d)
   * [BayesianLSTM](#class-BayesianLSTM)
+  * [BayesianEmbedding](#class-BayesianEmbedding)
 
 ---
 ## class BayesianModule(torch.nn.Module)
@@ -132,3 +133,46 @@ Inherits from BayesianModule
    
       Assings internally for its weights deterministaclly the mean of its GaussianVariational sampler.
       
+---
+
+## class BayesianEmbedding
+### blitz.modules.BayesianEmbedding (num_embeddings, embedding_dim, padding_idx=None, max_norm=None, norm_type=2.0, scale_grad_by_freq=False, sparse=False, prior_sigma_1 = 1, prior_sigma_2 = 0.002, prior_pi = 0.5, freeze = False,)
+
+Bayesian Embedding layer, implements the Embedding layer using the weight uncertainty tools proposed on Weight Uncertainity on Neural Networks (Bayes by Backprop paper). 
+
+Creates weight samplers of the class GaussianVariational for the weights and biases to be used on its feedforward ops.
+
+Inherits from BayesianModule
+
+#### Parameters:
+  * num_embedding int -> Size of the vocabulary
+  * embedding_dim int -> Dimension of the embedding
+  * prior_sigma_1 float -> sigma of one of the prior w distributions to mixture
+  * prior_sigma_2 float -> sigma of one of the prior w distributions to mixture
+  * prior_pi float -> factor to scale the gaussian mixture of the model prior distribution
+  * freeze -> wheter the model is instaced as frozen (will use deterministic weights on the feedforward op)
+  * padding_idx int -> If given, pads the output with the embedding vector at padding_idx (initialized to zeros) whenever it encounters the index
+  * max_norm float -> If given, each embedding vector with norm larger than max_norm is renormalized to have norm max_norm.
+  * norm_type float -> The p of the p-norm to compute for the max_norm option. Default 2.
+  * scale_grad_by_freq -> If given, this will scale gradients by the inverse of frequency of the words in the mini-batch. Default False.
+  * sparse bool -> If True, gradient w.r.t. weight matrix will be a sparse tensor. See Notes for more details regarding sparse gradients.
+  
+  
+  
+#### Methods:
+  * forward(x, ):
+      
+      Performs a embedding operation with sampled weights. If the model is frozen uses only the expected values.
+      
+      Returns  tuple of format (torch.tensor, (torch.tensor, torch.tensor)), representing the output and hidden state of the LSTM layer
+      
+      Description
+      ##### Parameters
+       * x - torch.tensor corresponding to the datapoints tensor to be feedforwarded
+       * hidden_states - None or tupl of the format (torch.tensor, torch.tensor), representing the hidden states of the network. Internally, if None, consider zeros of the proper format).
+      
+   * sample_weights():
+      
+      Assings internally its weights to be used on feedforward operations by sampling it from its GaussianVariational
+      
+    
