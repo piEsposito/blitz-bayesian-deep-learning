@@ -3,7 +3,9 @@ They all inherit from torch.nn.Module
 # Index:
   * [BayesianModule](#class-BayesianModule)
   * [BayesianLinear](#class-BayesianLinear)
+  * [BayesianConv1d](#class-BayesianConv1d)
   * [BayesianConv2d](#class-BayesianConv2d)
+  * [BayesianConv3d](#class-BayesianConv3d)
   * [BayesianLSTM](#class-BayesianLSTM)
   * [BayesianEmbedding](#class-BayesianEmbedding)
 
@@ -55,8 +57,51 @@ Inherits from BayesianModule
       Description
       ##### Parameters
        * x = torch.tensor corresponding to the datapoints tensor to be feedforwarded
-      
+
 ---
+## class BayesianConv1d
+### blitz.modules.BayesianConv1d(in_channels, out_channels, kernel_size, groups = 1, stride = 1, padding = 0, dilation = 1, bias=True, prior_sigma_1 = 1, prior_sigma_2 = 0.002, prior_pi = 0.5, freeze = False)
+DESCRIPTION
+
+#### Parameters:
+  * in_channels int -> incoming channels for the layer
+  * out_channels int -> output channels for the layer
+  * kernel_size int -> size of the kernels for this convolution layer
+  * groups int -> number of groups on which the convolutions will happend
+  * padding int -> size of padding (0 if no padding)
+  * dilation int -> dilation of the weights applied on the input tensor
+  * bias bool -> whether the bias will exist (True) or set to zero (False)
+  * prior_sigma_1 float -> prior sigma on the mixture prior distribution 1
+  * prior_sigma_2 float -> prior sigma on the mixture prior distribution 2
+  * prior_pi float -> pi on the scaled mixture prior
+  * posterior_mu_init float -> posterior mean for the weight mu init
+  * posterior_rho_init float -> posterior mean for the weight rho init
+  * freeze bool -> wheter the model will start with frozen(deterministic) weights, or not
+  
+#### Methods:
+  * forward():
+      
+      Performs a feedforward Conv3d operation with sampled weights. If the model is frozen uses only the expected values.
+      
+      Returns torch.tensor
+      
+      Description
+      ##### Parameters
+       * x - torch.tensor corresponding to the datapoints tensor to be feedforwarded
+      
+   * forward_frozen(x):
+      
+      Performs a feedforward Conv2d operation using onle the mu tensor as weights. 
+      
+      Returns torch.tensor
+      
+      Description
+      ##### Parameters
+       * x = torch.tensor corresponding to the datapoints tensor to be feedforwarded
+    
+
+---
+
 ## class BayesianConv2d
 ### blitz.modules.BayesianConv2d(in_channels, out_channels, kernel_size, groups = 1, stride = 1, padding = 0, dilation = 1, bias=True, prior_sigma_1 = 1, prior_sigma_2 = 0.002, prior_pi = 0.5, freeze = False)
 DESCRIPTION
@@ -80,6 +125,48 @@ DESCRIPTION
   * forward():
       
       Performs a feedforward Conv2d operation with sampled weights. If the model is frozen uses only the expected values.
+      
+      Returns torch.tensor
+      
+      Description
+      ##### Parameters
+       * x - torch.tensor corresponding to the datapoints tensor to be feedforwarded
+      
+   * forward_frozen(x):
+      
+      Performs a feedforward Conv2d operation using onle the mu tensor as weights. 
+      
+      Returns torch.tensor
+      
+      Description
+      ##### Parameters
+       * x = torch.tensor corresponding to the datapoints tensor to be feedforwarded
+    
+---
+
+## class BayesianConv3d
+### blitz.modules.BayesianConv2d(in_channels, out_channels, kernel_size, groups = 1, stride = 1, padding = 0, dilation = 1, bias=True, prior_sigma_1 = 1, prior_sigma_2 = 0.002, prior_pi = 0.5, freeze = False)
+DESCRIPTION
+
+#### Parameters:
+  * in_channels int -> incoming channels for the layer
+  * out_channels int -> output channels for the layer
+  * kernel_size tuple (int, int, int) -> size of the kernels for this convolution layer
+  * groups int -> number of groups on which the convolutions will happend
+  * padding int -> size of padding (0 if no padding)
+  * dilation int -> dilation of the weights applied on the input tensor
+  * bias bool -> whether the bias will exist (True) or set to zero (False)
+  * prior_sigma_1 float -> prior sigma on the mixture prior distribution 1
+  * prior_sigma_2 float -> prior sigma on the mixture prior distribution 2
+  * prior_pi float -> pi on the scaled mixture prior
+  * posterior_mu_init float -> posterior mean for the weight mu init
+  * posterior_rho_init float -> posterior mean for the weight rho init
+  * freeze bool -> wheter the model will start with frozen(deterministic) weights, or not
+  
+#### Methods:
+  * forward():
+      
+      Performs a feedforward Conv3d operation with sampled weights. If the model is frozen uses only the expected values.
       
       Returns torch.tensor
       
