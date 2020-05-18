@@ -6,19 +6,24 @@ from blitz.modules.weight_sampler import GaussianVariational, ScaleMixturePrior
 
 class BayesianEmbedding(BayesianModule):
     """
-    Bayesian Linear layer, implements the linear layer proposed on Weight Uncertainity on Neural Networks
+    Bayesian Embedding layer, implements the embedding layer proposed on Weight Uncertainity on Neural Networks
     (Bayes by Backprop paper).
 
     Its objective is be interactable with torch nn.Module API, being able even to be chained in nn.Sequential models with other non-this-lib layers
     
     parameters:
-        in_fetaures: int -> incoming features for the layer
-        out_features: int -> output features for the layer
-        bias: bool -> whether the bias will exist (True) or set to zero (False)
-        prior_sigma_1: float -> prior sigma on the mixture prior distribution 1
-        prior_sigma_2: float -> prior sigma on the mixture prior distribution 2
-        prior_pi: float -> pi on the scaled mixture prior
-        freeze: bool -> wheter the model will start with frozen(deterministic) weights, or not
+        num_embedding int -> Size of the vocabulary
+        embedding_dim int -> Dimension of the embedding
+        prior_sigma_1 float -> sigma of one of the prior w distributions to mixture
+        prior_sigma_2 float -> sigma of one of the prior w distributions to mixture
+        prior_pi float -> factor to scale the gaussian mixture of the model prior distribution
+        freeze -> wheter the model is instaced as frozen (will use deterministic weights on the feedforward op)
+        padding_idx int -> If given, pads the output with the embedding vector at padding_idx (initialized to zeros) whenever it encounters the index
+        max_norm float -> If given, each embedding vector with norm larger than max_norm is renormalized to have norm max_norm.
+        norm_type float -> The p of the p-norm to compute for the max_norm option. Default 2.
+        scale_grad_by_freq -> If given, this will scale gradients by the inverse of frequency of the words in the mini-batch. Default False.
+        sparse bool -> If True, gradient w.r.t. weight matrix will be a sparse tensor. See Notes for more details regarding sparse gradients.
+
     
     """
     def __init__(self,
