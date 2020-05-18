@@ -32,6 +32,8 @@ Inherits from BayesianModule
   * prior_sigma_2 float -> sigma of one of the prior w distributions to mixture
   * prior_pi float -> factor to scale the gaussian mixture of the model prior distribution
   * freeze -> wheter the model is instaced as frozen (will use deterministic weights on the feedforward op)
+  * posterior_mu_init float -> posterior mean for the weight mu init
+  * posterior_rho_init float -> posterior mean for the weight rho init
   
 #### Methods:
   * forward():
@@ -70,6 +72,8 @@ DESCRIPTION
   * prior_sigma_1 float -> prior sigma on the mixture prior distribution 1
   * prior_sigma_2 float -> prior sigma on the mixture prior distribution 2
   * prior_pi float -> pi on the scaled mixture prior
+  * posterior_mu_init float -> posterior mean for the weight mu init
+  * posterior_rho_init float -> posterior mean for the weight rho init
   * freeze bool -> wheter the model will start with frozen(deterministic) weights, or not
   
 #### Methods:
@@ -111,6 +115,8 @@ Inherits from BayesianModule
   * prior_sigma_1 float -> sigma of one of the prior w distributions to mixture
   * prior_sigma_2 float -> sigma of one of the prior w distributions to mixture
   * prior_pi float -> factor to scale the gaussian mixture of the model prior distribution
+  * posterior_mu_init float -> posterior mean for the weight mu init
+  * posterior_rho_init float -> posterior mean for the weight rho init
   * freeze -> wheter the model is instaced as frozen (will use deterministic weights on the feedforward op)
   
 #### Methods:
@@ -156,6 +162,8 @@ Inherits from BayesianModule
   * norm_type float -> The p of the p-norm to compute for the max_norm option. Default 2.
   * scale_grad_by_freq -> If given, this will scale gradients by the inverse of frequency of the words in the mini-batch. Default False.
   * sparse bool -> If True, gradient w.r.t. weight matrix will be a sparse tensor. See Notes for more details regarding sparse gradients.
+  * posterior_mu_init float -> posterior mean for the weight mu init
+  * posterior_rho_init float -> posterior mean for the weight rho init
   
   
   
