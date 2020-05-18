@@ -19,6 +19,8 @@ class BayesianLinear(BayesianModule):
         prior_sigma_1: float -> prior sigma on the mixture prior distribution 1
         prior_sigma_2: float -> prior sigma on the mixture prior distribution 2
         prior_pi: float -> pi on the scaled mixture prior
+        posterior_mu_init float -> posterior mean for the weight mu init
+        posterior_rho_init float -> posterior mean for the weight rho init
         freeze: bool -> wheter the model will start with frozen(deterministic) weights, or not
     
     """
@@ -26,9 +28,11 @@ class BayesianLinear(BayesianModule):
                  in_features,
                  out_features,
                  bias=True,
-                 prior_sigma_1 = 1,
-                 prior_sigma_2 = 0.002,
-                 prior_pi = 0.5,
+                 prior_sigma_1 = 0.1,
+                 prior_sigma_2 = 0.4,
+                 prior_pi = 1,
+                 posterior_mu_init = 0,
+                 posterior_rho_init = -6.0,
                  freeze = False):
         super().__init__()
 
@@ -38,19 +42,23 @@ class BayesianLinear(BayesianModule):
         self.bias = bias
         self.freeze = freeze
 
+
+        self.posterior_mu_init = posterior_mu_init
+        self.posterior_rho_init = posterior_rho_init
+
         #parameters for the scale mixture prior
         self.prior_sigma_1 = prior_sigma_1
         self.prior_sigma_2 = prior_sigma_2
         self.prior_pi = prior_pi
 
         # Variational weight parameters and sample
-        self.weight_mu = nn.Parameter(torch.Tensor(out_features, in_features).uniform_(-0.2, 0.2))
-        self.weight_rho = nn.Parameter(torch.Tensor(out_features, in_features).uniform_(-5, -4))
+        self.weight_mu = nn.Parameter(torch.Tensor(out_features, in_features).normal_(posterior_mu_init, 0.1))
+        self.weight_rho = nn.Parameter(torch.Tensor(out_features, in_features).normal_(posterior_rho_init, 0.1))
         self.weight_sampler = GaussianVariational(self.weight_mu, self.weight_rho)
 
         # Variational bias parameters and sample
-        self.bias_mu = nn.Parameter(torch.Tensor(out_features).uniform_(-0.2, 0.2))
-        self.bias_rho = nn.Parameter(torch.Tensor(out_features).uniform_(-5, -4))
+        self.bias_mu = nn.Parameter(torch.Tensor(out_features).normal_(posterior_mu_init, 0.1))
+        self.bias_rho = nn.Parameter(torch.Tensor(out_features).normal_(posterior_rho_init, 0.1))
         self.bias_sampler = GaussianVariational(self.bias_mu, self.bias_rho)
 
         # Priors (as BBP paper)

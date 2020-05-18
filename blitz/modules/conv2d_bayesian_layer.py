@@ -28,6 +28,8 @@ class BayesianConv2d(BayesianModule):
         prior_sigma_1: float -> prior sigma on the mixture prior distribution 1
         prior_sigma_2: float -> prior sigma on the mixture prior distribution 2
         prior_pi: float -> pi on the scaled mixture prior
+        posterior_mu_init float -> posterior mean for the weight mu init
+        posterior_rho_init float -> posterior mean for the weight rho init
         freeze: bool -> wheter the model will start with frozen(deterministic) weights, or not
     
     """
@@ -40,9 +42,11 @@ class BayesianConv2d(BayesianModule):
                  padding = 0,
                  dilation = 1,
                  bias=True,
-                 prior_sigma_1 = 1,
+                 prior_sigma_1 = 0.1,
                  prior_sigma_2 = 0.002,
-                 prior_pi = 0.5,
+                 prior_pi = 1,
+                 posterior_mu_init = 0,
+                 posterior_rho_init = -6.0,
                  freeze = False):
         super().__init__()
         
@@ -57,19 +61,23 @@ class BayesianConv2d(BayesianModule):
         self.dilation = dilation
         self.bias = bias
 
+
+        self.posterior_mu_init = posterior_mu_init
+        self.posterior_rho_init = posterior_rho_init
+
         #parameters for the scale mixture prior
         self.prior_sigma_1 = prior_sigma_1
         self.prior_sigma_2 = prior_sigma_2
         self.prior_pi = prior_pi
 
         #our weights
-        self.weight_mu = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *kernel_size).uniform_(-1, 1))
-        self.weight_rho = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *kernel_size).uniform_(-1, 1))
+        self.weight_mu = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *kernel_size).normal_(posterior_mu_init, 0.1))
+        self.weight_rho = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *kernel_size).normal_(posterior_rho_init, 0.1))
         self.weight_sampler = GaussianVariational(self.weight_mu, self.weight_rho)
 
         #our biases
-        self.bias_mu = nn.Parameter(torch.Tensor(out_channels).uniform_(-1, 1))
-        self.bias_rho = nn.Parameter(torch.Tensor(out_channels).uniform_(-1, 1))
+        self.bias_mu = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_mu_init, 0.1))
+        self.bias_rho = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_rho_init, 0.1))
         self.bias_sampler = GaussianVariational(self.bias_mu, self.bias_rho)
 
         # Priors (as BBP paper)
