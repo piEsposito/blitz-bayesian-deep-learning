@@ -34,9 +34,11 @@ class BayesianEmbedding(BayesianModule):
                  norm_type=2.,
                  scale_grad_by_freq=False,
                  sparse=False,
-                 prior_sigma_1 = 1,
+                 prior_sigma_1 = 0.1,
                  prior_sigma_2 = 0.002,
-                 prior_pi = 0.5,
+                 prior_pi = 1,
+                 posterior_mu_init = 0,
+                 posterior_rho_init = -6.0,
                  freeze = False):
         super().__init__()
 
@@ -45,6 +47,9 @@ class BayesianEmbedding(BayesianModule):
         #parameters for the scale mixture prior
         self.prior_sigma_1 = prior_sigma_1
         self.prior_sigma_2 = prior_sigma_2
+        self.posterior_mu_init = posterior_mu_init
+        self.posterior_rho_init = posterior_rho_init
+
         self.prior_pi = prior_pi
 
         self.num_embeddings = num_embeddings
@@ -56,8 +61,8 @@ class BayesianEmbedding(BayesianModule):
         self.sparse = sparse
 
         # Variational weight parameters and sample
-        self.weight_mu = nn.Parameter(torch.Tensor(num_embeddings, embedding_dim).uniform_(-0.2, 0.2))
-        self.weight_rho = nn.Parameter(torch.Tensor(num_embeddings, embedding_dim).uniform_(-5, -4))
+        self.weight_mu = nn.Parameter(torch.Tensor(num_embeddings, embedding_dim).normal_(posterior_mu_init, 0.1))
+        self.weight_rho = nn.Parameter(torch.Tensor(num_embeddings, embedding_dim).normal_(posterior_rho_init, 0.1))
         self.weight_sampler = GaussianVariational(self.weight_mu, self.weight_rho)
 
         # Priors (as BBP paper)
