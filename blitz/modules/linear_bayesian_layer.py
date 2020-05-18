@@ -19,6 +19,8 @@ class BayesianLinear(BayesianModule):
         prior_sigma_1: float -> prior sigma on the mixture prior distribution 1
         prior_sigma_2: float -> prior sigma on the mixture prior distribution 2
         prior_pi: float -> pi on the scaled mixture prior
+        posterior_mu_init float -> posterior mean for the weight mu init
+        posterior_rho_init float -> posterior mean for the weight rho init
         freeze: bool -> wheter the model will start with frozen(deterministic) weights, or not
     
     """

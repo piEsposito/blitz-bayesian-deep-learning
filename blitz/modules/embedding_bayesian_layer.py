@@ -23,6 +23,8 @@ class BayesianEmbedding(BayesianModule):
         norm_type float -> The p of the p-norm to compute for the max_norm option. Default 2.
         scale_grad_by_freq -> If given, this will scale gradients by the inverse of frequency of the words in the mini-batch. Default False.
         sparse bool -> If True, gradient w.r.t. weight matrix will be a sparse tensor. See Notes for more details regarding sparse gradients.
+        posterior_mu_init float -> posterior mean for the weight mu init
+        posterior_rho_init float -> posterior mean for the weight rho init
 
     
     """

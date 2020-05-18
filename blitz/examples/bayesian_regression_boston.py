@@ -55,7 +55,7 @@ def evaluate_regression(regressor,
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 regressor = BayesianRegressor(13, 1).to(device)
-optimizer = optim.SGD(regressor.parameters(), lr=0.001)
+optimizer = optim.Adam(regressor.parameters(), lr=0.01)
 criterion = torch.nn.MSELoss()
 
 ds_train = torch.utils.data.TensorDataset(X_train, y_train)
@@ -66,7 +66,7 @@ dataloader_test = torch.utils.data.DataLoader(ds_test, batch_size=16, shuffle=Tr
 
 
 iteration = 0
-for epoch in range(100):
+for epoch in range(1000):
     for i, (datapoints, labels) in enumerate(dataloader_train):
         optimizer.zero_grad()
         
