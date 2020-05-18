@@ -26,9 +26,9 @@ class BayesianLSTM(BayesianModule):
                  in_features,
                  out_features,
                  bias = True,
-                 prior_sigma_1 = 1,
+                 prior_sigma_1 = 0.1,
                  prior_sigma_2 = 0.002,
-                 prior_pi = 0.5,
+                 prior_pi = 1,
                  posterior_mu_init = 0,
                  posterior_rho_init = -6.0,
                  freeze = False):
