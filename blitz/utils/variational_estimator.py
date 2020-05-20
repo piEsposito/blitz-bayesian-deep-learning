@@ -75,7 +75,7 @@ def variational_estimator(nn_class):
             if isinstance(module, (BayesianModule)):
                 module.freeze = True
 
-    setattr(nn_class, "freeze", freeze_model)
+    setattr(nn_class, "freeze_", freeze_model)
 
     def unfreeze_model(self):
         """
@@ -86,5 +86,5 @@ def variational_estimator(nn_class):
             if isinstance(module, (BayesianModule)):
                 module.freeze = False
 
-    setattr(nn_class, "unfreeze", unfreeze_model)
+    setattr(nn_class, "unfreeze_", unfreeze_model)
     return nn_class
