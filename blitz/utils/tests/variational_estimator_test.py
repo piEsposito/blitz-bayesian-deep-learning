@@ -108,10 +108,10 @@ class TestVariationalInference(unittest.TestCase):
         net = BayesianMLP(28*28, 10)
         self.assertEqual((net(batch[0])!=net(batch[0])).any(), torch.tensor(True))
 
-        net.freeze()
+        net.freeze_()
         self.assertEqual((net(batch[0])==net(batch[0])).all(), torch.tensor(True))
 
-        net.unfreeze()
+        net.unfreeze_()
         self.assertEqual((net(batch[0])!=net(batch[0])).any(), torch.tensor(True))
         pass
 
