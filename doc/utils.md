@@ -2,6 +2,8 @@
 
 # Index:
   * [Decorator variational_estimator](#Variational-Estimator)
+  * [Layer wrapper flipout](#Flipout)
+  * [Layer wrapper radial](#Radial)
 ---
 ## Variational Estimator
 
@@ -36,4 +38,21 @@ Dynamically adds some util methods to object that inherits from torch.nn.Module 
                
       * criterion: torch.nn.Module, custom criterion (loss) function, torch.nn.functional function -> criterion to gather the performance cost for the model
       * sample_nbr: int -> The number of times of the weight-sampling and predictions done in our Monte-Carlo approach to gather the loss to be .backwarded in the optimization of the model.
-    
+  
+ ---
+  
+## Radial
+Changer the layer's weight sampler sampling method changed to divide its epsilon per its epsilon norm, following the Radial BNN paper.
+
+### Parameters:
+  * nn_module: -> torch.nn.Module, blitz.modules.base_bayesian_module.BayesianModule layer class to have its weight sampler sampling method changed to divide its epsilon per its epsilon norm, following the Radial BNN paper.
+  
+---
+
+## Flipout
+Changer the layer's feedforward forward method operation to perform the Flipout operation.
+
+### Parameters:
+  * nn_module: -> torch.nn.Module, blitz.modules.base_bayesian_module.BayesianModule layer class to have its feedforward operation feedforward method changed to perform the Flipout operation.
+  
+---
