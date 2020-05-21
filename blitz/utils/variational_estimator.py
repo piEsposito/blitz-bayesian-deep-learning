@@ -115,4 +115,25 @@ def variational_estimator(nn_class):
         self.unfreeze_()
 
     setattr(nn_class, 'MOPED_', moped)
+
+    def mfvi_forward(self, inputs, sample_nbr=10):
+        """
+        Performs mean-field variational inference for the variational estimator model:
+            Performs sample_nbr forward passes with uncertainty on the weights, returning its mean and standard deviation
+
+        Parameters:
+            inputs: torch.tensor -> the input data to the model
+            sample_nbr: int -> number of forward passes to be done on the data
+        Returns:
+            mean_: torch.tensor -> mean of the perdictions along each of the features of each datapoint on the batch axis
+            std_: torch.tensor -> std of the predictions along each of the features of each datapoint on the batch axis
+
+
+        """
+        result = torch.stack([self(inputs) for _ in range(sample_nbr)])
+        return result.mean(dim=0), result.std(dim=0)
+    
+    setattr(nn_class, 'mfvi_forward', mfvi_forward)
+        
+
     return nn_class

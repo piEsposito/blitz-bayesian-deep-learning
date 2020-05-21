@@ -38,6 +38,20 @@ Dynamically adds some util methods to object that inherits from torch.nn.Module 
                
       * criterion: torch.nn.Module, custom criterion (loss) function, torch.nn.functional function -> criterion to gather the performance cost for the model
       * sample_nbr: int -> The number of times of the weight-sampling and predictions done in our Monte-Carlo approach to gather the loss to be .backwarded in the optimization of the model.
+
+    #### Returns:
+      * loss: torch.tensor -> elbo loss for the data given
+
+  * #### mfvi_forward(inputs, sample_nbr)
+
+  Performs mean-field variational inference for the variational estimator model on the inputs
+
+  #### Parameters:
+    * inputs: torch.tensor -> the input data to the model
+    * sample_nbr: int -> number of forward passes to be done on the data
+  #### Returns:
+    * mean_: torch.tensor -> mean of the perdictions along each of the features of each datapoint on the batch axis, for each feature of ea
+    * std_: torch.tensor -> std of the predictions along each of the features of each datapoint on the batch axis
   
  ---
   
