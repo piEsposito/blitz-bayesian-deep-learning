@@ -40,6 +40,10 @@ def Flipout(nn_module):
         if nn_module not in [BayesianLSTM, ]:
             def forward(self, x):
                 outputs = super().forward_frozen(x)
+
+                if self.freeze:
+                    return outputs
+
                 #getting the sign matrixes
                 sign_input = x.clone().uniform_(-1, 1).sign()
                 sign_output = outputs.clone().uniform_(-1, 1).sign()
@@ -50,6 +54,8 @@ def Flipout(nn_module):
         else:
             def forward(self, x, states=None):
                 outputs, states = super().forward_frozen(x, states)
+                if self.freeze:
+                    return outputs, states
 
                 #getting the sign matrixes
                 sign_input = x.clone().uniform_(-1, 1).sign()
