@@ -4,7 +4,7 @@ from torch import nn
 import torchvision.datasets as dsets
 import torchvision.transforms as transforms
 
-from blitz.modules import BayesianConv2d, BayesianLinear
+from blitz.modules import BayesianConv2d, BayesianLinear, BayesianLSTM, BayesianEmbedding, GaussianVariational
 from blitz.losses import kl_divergence_from_nn
 from blitz.utils import variational_estimator
 
@@ -114,6 +114,22 @@ class TestVariationalInference(unittest.TestCase):
         net.unfreeze_()
         self.assertEqual((net(batch[0])!=net(batch[0])).any(), torch.tensor(True))
         pass
+
+    def test_moped(self):
+
+        @variational_estimator
+        class BayesianMLP(nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.blinear1 = BayesianLinear(10, 512)
+                self.bconv = BayesianConv2d(3, 3, kernel_size=(3, 3), padding=1, bias=True)
+                self.blstm = BayesianLSTM(10, 2)
+            def forward(self, x):
+                return x
+        model = BayesianMLP()
+        model.MOPED_()
+
+
 
 if __name__ == "__main__":
     unittest.main()

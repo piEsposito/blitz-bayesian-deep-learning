@@ -1,4 +1,6 @@
 import torch
+
+from blitz.modules.weight_sampler import GaussianVariational
 from blitz.losses import kl_divergence_from_nn
 from blitz.modules.base_bayesian_module import BayesianModule
 
@@ -87,4 +89,29 @@ def variational_estimator(nn_class):
                 module.freeze = False
 
     setattr(nn_class, "unfreeze_", unfreeze_model)
+
+    def moped(self, delta=0.1):
+        """
+        Sets the sigma for the posterior distribution to delta * mu as proposed in
+
+        @misc{krishnan2019specifying,
+            title={Specifying Weight Priors in Bayesian Deep Neural Networks with Empirical Bayes},
+            author={Ranganath Krishnan and Mahesh Subedar and Omesh Tickoo},
+            year={2019},
+            eprint={1906.05323},
+            archivePrefix={arXiv},
+            primaryClass={cs.NE}
+        }   
+
+
+        """
+        for module in self.modules():
+            if isinstance(module, (BayesianModule)):
+
+                for attr in module.modules():
+                    if isinstance(attr, (GaussianVariational)):
+                        attr.rho.data = torch.log(torch.expm1(delta * torch.abs(attr.mu.data) ) + 1e-10)
+        self.unfreeze_()
+
+    setattr(nn_class, 'MOPED_', moped)
     return nn_class
