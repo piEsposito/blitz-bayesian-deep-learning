@@ -41,7 +41,8 @@ class BayesianEmbedding(BayesianModule):
                  prior_pi = 1,
                  posterior_mu_init = 0,
                  posterior_rho_init = -6.0,
-                 freeze = False):
+                 freeze = False,
+                 prior_dist = None):
         super().__init__()
 
         self.freeze = freeze
@@ -53,6 +54,7 @@ class BayesianEmbedding(BayesianModule):
         self.posterior_rho_init = posterior_rho_init
 
         self.prior_pi = prior_pi
+        self.prior_dist = prior_dist
 
         self.num_embeddings = num_embeddings
         self.embedding_dim = embedding_dim
@@ -68,7 +70,7 @@ class BayesianEmbedding(BayesianModule):
         self.weight_sampler = GaussianVariational(self.weight_mu, self.weight_rho)
 
         # Priors (as BBP paper)
-        self.weight_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2)
+        self.weight_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         self.log_prior = 0
         self.log_variational_posterior = 0
 
