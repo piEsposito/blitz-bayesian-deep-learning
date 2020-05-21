@@ -50,14 +50,27 @@ class GaussianVariational(nn.Module):
 
 class ScaleMixturePrior(nn.Module):
     #Calculates a Scale Mixture Prior distribution for the prior part of the complexity cost on Bayes by Backprop paper
-    def __init__(self, pi, sigma1, sigma2):
+    def __init__(self,
+                 pi=1,
+                 sigma1=0.1,
+                 sigma2=0.001,
+                 dist=None):
         super().__init__()
 
-        self.pi = pi
-        self.sigma1 = sigma1
-        self.sigma2 = sigma2
-        self.normal1 = torch.distributions.Normal(0, sigma1)
-        self.normal2 = torch.distributions.Normal(0, sigma2)
+
+        if (dist is None):
+            self.pi = pi
+            self.sigma1 = sigma1
+            self.sigma2 = sigma2
+            self.dist1 = torch.distributions.Normal(0, sigma1)
+            self.dist2 = torch.distributions.Normal(0, sigma2)
+
+        if (dist is not None):
+            self.pi = 1
+            self.dist1 = dist
+            self.dist2 = None
+
+        
 
     def log_prior(self, w):
         """
@@ -66,8 +79,13 @@ class ScaleMixturePrior(nn.Module):
         returns:
             torch.tensor with shape []
         """
-        prob_n1 = torch.exp(self.normal1.log_prob(w))
-        prob_n2 = torch.exp(self.normal2.log_prob(w))
+        prob_n1 = torch.exp(self.dist1.log_prob(w))
+
+        if self.dist2 is not None:
+            prob_n2 = torch.exp(self.dist2.log_prob(w))
+        if self.dist2 is None:
+            prob_n2 = 0
+
         prior_pdf = (self.pi * prob_n1 + (1 - self.pi) * prob_n2)
 
         return (torch.log(prior_pdf)).mean()

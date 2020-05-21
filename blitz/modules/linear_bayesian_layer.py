@@ -33,7 +33,8 @@ class BayesianLinear(BayesianModule):
                  prior_pi = 1,
                  posterior_mu_init = 0,
                  posterior_rho_init = -6.0,
-                 freeze = False):
+                 freeze = False,
+                 prior_dist = None):
         super().__init__()
 
         #our main parameters
@@ -50,6 +51,7 @@ class BayesianLinear(BayesianModule):
         self.prior_sigma_1 = prior_sigma_1
         self.prior_sigma_2 = prior_sigma_2
         self.prior_pi = prior_pi
+        self.prior_dist = prior_dist
 
         # Variational weight parameters and sample
         self.weight_mu = nn.Parameter(torch.Tensor(out_features, in_features).normal_(posterior_mu_init, 0.1))
@@ -62,8 +64,8 @@ class BayesianLinear(BayesianModule):
         self.bias_sampler = GaussianVariational(self.bias_mu, self.bias_rho)
 
         # Priors (as BBP paper)
-        self.weight_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2)
-        self.bias_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2)
+        self.weight_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        self.bias_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         self.log_prior = 0
         self.log_variational_posterior = 0
 
