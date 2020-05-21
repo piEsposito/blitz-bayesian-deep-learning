@@ -77,8 +77,8 @@ class BayesianLSTM(BayesianModule):
     
     def sample_weights(self):
         #sample weights
-        self.weight_ih = self.weight_ih_sampler.sample()
-        self.weight_hh = self.weight_hh_sampler.sample()
+        weight_ih = self.weight_ih_sampler.sample()
+        weight_hh = self.weight_hh_sampler.sample()
         
         #if use bias, we sample it, otherwise, we are using zeros
         if self.use_bias:
@@ -87,31 +87,37 @@ class BayesianLSTM(BayesianModule):
             b_log_prior = self.bias_prior_dist.log_prior(b)
             
         else:
-            b = torch.zeros((self.out_features * 4))
+            b = 0
             b_log_posterior = 0
             b_log_prior = 0
             
-        self.bias = b
+        bias = b
         
         #gather weights variational posterior and prior likelihoods
         self.log_variational_posterior = self.weight_hh_sampler.log_posterior() + b_log_posterior + self.weight_ih_sampler.log_posterior()
         
-        self.log_prior = self.weight_ih_prior_dist.log_prior(self.weight_ih) + b_log_prior + self.weight_hh_prior_dist.log_prior(self.weight_hh)
+        self.log_prior = self.weight_ih_prior_dist.log_prior(weight_ih) + b_log_prior + self.weight_hh_prior_dist.log_prior(weight_hh)
+        return weight_ih, weight_hh, bias
         
     def get_frozen_weights(self):
         
         #get all deterministic weights
-        self.weight_ih = self.weight_ih_mu
-        self.weight_hh = self.weight_hh_mu
+        weight_ih = self.weight_ih_mu
+        weight_hh = self.weight_hh_mu
         if self.use_bias:
-            self.bias = self.bias_mu
+            bias = self.bias_mu
         else:
-            self.bias = torch.zeros((self.out_features * 4))
+            bias = 0
+
+        return weight_ih, weight_hh, bias
+
     
-    def forward(self,
-                x,
-                hidden_states=None):
+    def forward_(self,
+                 x,
+                 hidden_states):
         
+        weight_ih, weight_hh, bias = self.sample_weights()
+
         #Assumes x is of shape (batch, sequence, feature)
         bs, seq_sz, _ = x.size()
         hidden_seq = []
@@ -123,11 +129,6 @@ class BayesianLSTM(BayesianModule):
         else:
             h_t, c_t = hidden_states
         
-        if self.freeze:
-            self.get_frozen_weights()
-        else:
-            self.sample_weights()
-        
         #simplifying our out features, and hidden seq list
         HS = self.out_features
         hidden_seq = []
@@ -135,7 +136,7 @@ class BayesianLSTM(BayesianModule):
         for t in range(seq_sz):
             x_t = x[:, t, :]
             # batch the computations into a single matrix multiplication
-            gates = x_t @ self.weight_ih + h_t @ self.weight_hh + self.bias
+            gates = x_t @ weight_ih + h_t @ weight_hh + bias
             
             i_t, f_t, g_t, o_t = (
                 torch.sigmoid(gates[:, :HS]), # input
@@ -152,3 +153,55 @@ class BayesianLSTM(BayesianModule):
         hidden_seq = hidden_seq.transpose(0, 1).contiguous()
         
         return hidden_seq, (h_t, c_t)
+
+    def forward_frozen(self,
+                       x,
+                       hidden_states):
+
+        weight_ih, weight_hh, bias = self.get_frozen_weights()
+
+        #Assumes x is of shape (batch, sequence, feature)
+        bs, seq_sz, _ = x.size()
+        hidden_seq = []
+        
+        #if no hidden state, we are using zeros
+        if hidden_states is None:
+            h_t, c_t = (torch.zeros(self.out_features).to(x.device), 
+                        torch.zeros(self.out_features).to(x.device))
+        else:
+            h_t, c_t = hidden_states
+        
+        #simplifying our out features, and hidden seq list
+        HS = self.out_features
+        hidden_seq = []
+        
+        for t in range(seq_sz):
+            x_t = x[:, t, :]
+            # batch the computations into a single matrix multiplication
+            gates = x_t @ weight_ih + h_t @ weight_hh + bias
+            
+            i_t, f_t, g_t, o_t = (
+                torch.sigmoid(gates[:, :HS]), # input
+                torch.sigmoid(gates[:, HS:HS*2]), # forget
+                torch.tanh(gates[:, HS*2:HS*3]),
+                torch.sigmoid(gates[:, HS*3:]), # output
+            )
+            c_t = f_t * c_t + i_t * g_t
+            h_t = o_t * torch.tanh(c_t)
+            hidden_seq.append(h_t.unsqueeze(0))
+            
+        hidden_seq = torch.cat(hidden_seq, dim=0)
+        # reshape from shape (sequence, batch, feature) to (batch, sequence, feature)
+        hidden_seq = hidden_seq.transpose(0, 1).contiguous()
+        
+        return hidden_seq, (h_t, c_t)         
+
+    def forward(self,
+                x,
+                hidden_states=None):
+
+        if self.freeze:
+            return self.forward_frozen(x, hidden_states)
+
+        return self.forward_(x, hidden_states)   
+        

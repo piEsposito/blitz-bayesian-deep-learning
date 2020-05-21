@@ -15,6 +15,7 @@ def variational_estimator(nn_class):
         (1) Gathering the KL Divergence along its BayesianModules;
         (2) Sample the Elbo Loss along its variational inferences (helps training)
         (3) Freeze the model, in order to predict using only their weight distribution means
+        (4) Specifying the variational parameters by using some prior weights after training the NN as a deterministic model
     """
 
     def nn_kl_divergence(self):
