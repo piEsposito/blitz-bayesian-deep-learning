@@ -33,7 +33,8 @@ class BayesianLSTM(BayesianModule):
                  prior_pi = 1,
                  posterior_mu_init = 0,
                  posterior_rho_init = -6.0,
-                 freeze = False):
+                 freeze = False,
+                 prior_dist = None):
         
         super().__init__()
         self.in_features = in_features
@@ -47,6 +48,7 @@ class BayesianLSTM(BayesianModule):
         self.prior_sigma_1 = prior_sigma_1
         self.prior_sigma_2 = prior_sigma_2
         self.prior_pi = prior_pi
+        self.prior_dist = prior_dist
         
         # Variational weight parameters and sample for weight ih
         self.weight_ih_mu = nn.Parameter(torch.Tensor(in_features, out_features * 4).normal_(posterior_mu_init, 0.1))
@@ -67,9 +69,9 @@ class BayesianLSTM(BayesianModule):
         self.bias=None
         
         #our prior distributions
-        self.weight_ih_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2)
-        self.weight_hh_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2)
-        self.bias_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2)
+        self.weight_ih_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        self.weight_hh_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        self.bias_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         
         self.log_prior = 0
         self.log_variational_posterior = 0

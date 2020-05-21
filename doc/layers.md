@@ -36,6 +36,7 @@ Inherits from BayesianModule
   * freeze -> wheter the model is instaced as frozen (will use deterministic weights on the feedforward op)
   * posterior_mu_init float -> posterior mean for the weight mu init
   * posterior_rho_init float -> posterior mean for the weight rho init
+  * prior_dist -> torch.distributions.distribution.Distribution corresponding to a prior distribution different than a normal / scale mixture normal; if you pass that, the prior distribution will be that one and prior_sigma1 and prior_sigma2 and prior_pi can be dismissed. - Note that there is a torch issue that may output you logprob as NaN, so beware of the prior dist you are using.
   
 #### Methods:
   * forward():
@@ -77,6 +78,7 @@ DESCRIPTION
   * posterior_mu_init float -> posterior mean for the weight mu init
   * posterior_rho_init float -> posterior mean for the weight rho init
   * freeze bool -> wheter the model will start with frozen(deterministic) weights, or not
+  * prior_dist -> torch.distributions.distribution.Distribution corresponding to a prior distribution different than a normal / scale mixture normal; if you pass that, the prior distribution will be that one and prior_sigma1 and prior_sigma2 and prior_pi can be dismissed. - Note that there is a torch issue that may output you logprob as NaN, so beware of the prior dist you are using.
   
 #### Methods:
   * forward():
@@ -120,6 +122,7 @@ DESCRIPTION
   * posterior_mu_init float -> posterior mean for the weight mu init
   * posterior_rho_init float -> posterior mean for the weight rho init
   * freeze bool -> wheter the model will start with frozen(deterministic) weights, or not
+  * prior_dist -> torch.distributions.distribution.Distribution corresponding to a prior distribution different than a normal / scale mixture normal; if you pass that, the prior distribution will be that one and prior_sigma1 and prior_sigma2 and prior_pi can be dismissed. - Note that there is a torch issue that may output you logprob as NaN, so beware of the prior dist you are using.
   
 #### Methods:
   * forward():
@@ -162,6 +165,7 @@ DESCRIPTION
   * posterior_mu_init float -> posterior mean for the weight mu init
   * posterior_rho_init float -> posterior mean for the weight rho init
   * freeze bool -> wheter the model will start with frozen(deterministic) weights, or not
+  * prior_dist -> torch.distributions.distribution.Distribution corresponding to a prior distribution different than a normal / scale mixture normal; if you pass that, the prior distribution will be that one and prior_sigma1 and prior_sigma2 and prior_pi can be dismissed. - Note that there is a torch issue that may output you logprob as NaN, so beware of the prior dist you are using.
   
 #### Methods:
   * forward():
@@ -205,6 +209,7 @@ Inherits from BayesianModule
   * posterior_mu_init float -> posterior mean for the weight mu init
   * posterior_rho_init float -> posterior mean for the weight rho init
   * freeze -> wheter the model is instaced as frozen (will use deterministic weights on the feedforward op)
+  * prior_dist -> torch.distributions.distribution.Distribution corresponding to a prior distribution different than a normal / scale mixture normal; if you pass that, the prior distribution will be that one and prior_sigma1 and prior_sigma2 and prior_pi can be dismissed. - Note that there is a torch issue that may output you logprob as NaN, so beware of the prior dist you are using.
   
 #### Methods:
   * forward(x, ):
@@ -251,6 +256,7 @@ Inherits from BayesianModule
   * sparse bool -> If True, gradient w.r.t. weight matrix will be a sparse tensor. See Notes for more details regarding sparse gradients.
   * posterior_mu_init float -> posterior mean for the weight mu init
   * posterior_rho_init float -> posterior mean for the weight rho init
+  * prior_dist -> torch.distributions.distribution.Distribution corresponding to a prior distribution different than a normal / scale mixture normal; if you pass that, the prior distribution will be that one and prior_sigma1 and prior_sigma2 and prior_pi can be dismissed. - Note that there is a torch issue that may output you logprob as NaN, so beware of the prior dist you are using.
   
   
   
