@@ -160,8 +160,7 @@ class TestVariationalInference(unittest.TestCase):
         self.assertEqual(out__.shape, mean__.shape)
         self.assertEqual(out__.shape, std__.shape)
 
-        self.assertEqual((out__==mean__).all(), torch.tensor(True))
-        self.assertEqual((std__==0).any(), torch.tensor(True))
+        self.assertEqual((std__==0).all(), torch.tensor(True))
 
 
 if __name__ == "__main__":
