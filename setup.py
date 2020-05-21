@@ -11,7 +11,7 @@ with open(path.join(this_directory, 'requirements.txt'), encoding='utf-8') as f:
 setup(
     name = "blitz-bayesian-pytorch",
     packages = find_packages(),
-    version = "0.2.1",
+    version = "0.2.2",
     description = "A simple and extensible library to create Bayesian Neural Network Layers on PyTorch without trouble and with full integration with nn.Module and nn.Sequential.",
     author = "Pi Esposito",
     url = "https://github.com/piEsposito/blitz-bayesian-deep-learning",
