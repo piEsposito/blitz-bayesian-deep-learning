@@ -19,8 +19,16 @@ def copy_func(f, name=None):
 
 def Flipout(nn_module):
     """
-    Wrapper tha introduces flipout on the feedforwad operation of a BayesianModule layer in an non-intrusive way
+    Wrapper tha introduces flipout on the feedforwad operation of a BayesianModule layer in an non-intrusive way as in
 
+    @misc{wen2018flipout,
+        title={Flipout: Efficient Pseudo-Independent Weight Perturbations on Mini-Batches},
+        author={Yeming Wen and Paul Vicol and Jimmy Ba and Dustin Tran and Roger Grosse},
+        year={2018},
+        eprint={1803.04386},
+        archivePrefix={arXiv},
+        primaryClass={cs.LG}
+    }
     Parameters:
         nn_module: torch.nn.Module, BayesianModule -> Torch neural network module
 
@@ -56,3 +64,39 @@ def Flipout(nn_module):
                 return (perturbed_outputs + outputs, (states[i] + perturbed_states[i] for i in range(len(states))))
 
     return Flipout
+
+def Radial(nn_module):
+    """
+    Wrapper tha introduces the Radial feature on the feedforwad operation of a BayesianModule layer in an non-intrusive way as in
+
+    @misc{farquhar2019radial,
+        title={Radial Bayesian Neural Networks: Beyond Discrete Support In Large-Scale Bayesian Deep Learning},
+        author={Sebastian Farquhar and Michael Osborne and Yarin Gal},
+        year={2019},
+        eprint={1907.00865},
+        archivePrefix={arXiv},
+        primaryClass={stat.ML}
+    }
+    Parameters:
+        nn_module: torch.nn.Module, BayesianModule -> Torch neural network module
+
+    """
+
+    def sample_radial(self):
+        """
+        Samples weights by sampling form a Normal distribution, multiplying by a sigma, which is 
+        a function from a trainable parameter, and adding a mean sets those weights as the current ones
+
+        We divide the random parameter per its norm to perform radial bnn inference
+
+        returns:
+            torch.tensor with same shape as self.mu and self.rho
+        """
+
+        self.eps_w.data.normal_()
+        self.sigma = torch.log1p(torch.exp(self.rho))
+        self.w = self.mu + self.sigma * (self.eps_weight/torch.norm(self.eps_weight))
+        return self.w
+
+    setattr(nn_module, "sample", sample_radial)
+    return nn_module
