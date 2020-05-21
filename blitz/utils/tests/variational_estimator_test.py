@@ -129,6 +129,39 @@ class TestVariationalInference(unittest.TestCase):
         model = BayesianMLP()
         model.MOPED_()
 
+    def test_mfvi(self):
+
+        @variational_estimator
+        class BayesianMLP(nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.nn = nn.Sequential(BayesianLinear(10, 7), 
+                                        BayesianLinear(7, 5))
+            def forward(self, x):
+                return self.nn(x)
+        
+        net = BayesianMLP()
+        t = torch.ones(3, 10)
+        out_ = net(t)
+
+        mean_, std_ = net.mfvi_forward(t, sample_nbr=5)
+        self.assertEqual(out_.shape, mean_.shape)
+        self.assertEqual(out_.shape, std_.shape)
+
+        self.assertEqual((out_!=mean_).any(), torch.tensor(True))
+        self.assertEqual((std_!=0).any(), torch.tensor(True))
+
+        #we also check if, for the frozen model, the std is 0 and the mean is equal to any output
+        net.freeze_()
+        out__ = net(t)
+
+        mean__, std__ = net.mfvi_forward(t, sample_nbr=5)
+
+        self.assertEqual(out__.shape, mean__.shape)
+        self.assertEqual(out__.shape, std__.shape)
+
+        self.assertEqual((out__==mean__).all(), torch.tensor(True))
+        self.assertEqual((std__==0).any(), torch.tensor(True))
 
 
 if __name__ == "__main__":
