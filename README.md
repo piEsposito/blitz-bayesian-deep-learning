@@ -26,6 +26,7 @@ Our objective is empower people to apply Bayesian Deep Learning by focusing rath
    * [It is also true that there is complexity cost function differentiable along its variables](#It-is-also-true-that-there-is-complexity-cost-function-differentiable-along-its-variables)
    * [To get the whole cost function at the nth sample](#To-get-the-whole-cost-function-at-the-nth-sample)
    * [Some notes and wrap up](#Some-notes-and-wrap-up)
+ * [Citing](#Citing)
  * [References](#References)
    
    
@@ -303,6 +304,21 @@ FYI: **Our Bayesian Layers and utils help to calculate the complexity cost along
 ## References:
  * [Charles Blundell, Julien Cornebise, Koray Kavukcuoglu, and Daan Wierstra. Weight uncertainty in neural networks. arXiv preprint arXiv:1505.05424, 2015.](https://arxiv.org/abs/1505.05424)
  
+ 
+## Citing
+
+If you use `BLiTZ` in your research, you can cite it as follows:
+
+```bibtex
+@misc{esposito2020blitzbdl,
+    author = {Piero Esposito},
+    title = {BLiTZ - Bayesian Layers in Torch Zoo (a Bayesian Deep Learing library for Torch)},
+    year = {2020},
+    publisher = {GitHub},
+    journal = {GitHub repository},
+    howpublished = {\url{https://github.com/piEsposito/blitz-bayesian-deep-learning/}},
+}
+```
  
 ###### Special thanks to Intel Student Ambassador program
 
