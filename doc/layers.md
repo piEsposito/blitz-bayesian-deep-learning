@@ -7,6 +7,7 @@ They all inherit from torch.nn.Module
   * [BayesianConv2d](#class-BayesianConv2d)
   * [BayesianConv3d](#class-BayesianConv3d)
   * [BayesianLSTM](#class-BayesianLSTM)
+  * [BayesianGRU](#class-BayesianGRU)
   * [BayesianEmbedding](#class-BayesianEmbedding)
 
 ---
@@ -233,6 +234,49 @@ Inherits from BayesianModule
       
 ---
 
+## class BayesianGRU
+### blitz.modules.BayesianGRU(in_features, out_features, bias=True, prior_sigma_1 = 1, prior_sigma_2 = 0.002, prior_pi = 0.5, freeze = False)
+
+Bayesian GRU layer, implements the GRU layer using the weight uncertainty tools proposed on Weight Uncertainity on Neural Networks (Bayes by Backprop paper). 
+
+Creates weight samplers of the class GaussianVariational for the weights and biases to be used on its feedforward ops.
+
+Inherits from BayesianModule
+
+#### Parameters:
+  * in_features int -> Number nodes of the information to be feedforwarded
+  * out_features int -> Number of out nodes of the layer
+  * bias bool ->  wheter the model will have biases
+  * prior_sigma_1 float -> sigma of one of the prior w distributions to mixture
+  * prior_sigma_2 float -> sigma of one of the prior w distributions to mixture
+  * prior_pi float -> factor to scale the gaussian mixture of the model prior distribution
+  * posterior_mu_init float -> posterior mean for the weight mu init
+  * posterior_rho_init float -> posterior mean for the weight rho init
+  * freeze -> wheter the model is instaced as frozen (will use deterministic weights on the feedforward op)
+  * prior_dist -> torch.distributions.distribution.Distribution corresponding to a prior distribution different than a normal / scale mixture normal; if you pass that, the prior distribution will be that one and prior_sigma1 and prior_sigma2 and prior_pi can be dismissed. - Note that there is a torch issue that may output you logprob as NaN, so beware of the prior dist you are using.
+  
+#### Methods:
+  * forward(x, ):
+      
+      Performs a feedforward operation with sampled weights. If the model is frozen uses only the expected values.
+      
+      Returns  tuple of format (torch.tensor, (torch.tensor, torch.tensor)), representing the output and hidden state of the GRU layer
+      
+      Description
+      ##### Parameters
+       * x - torch.tensor corresponding to the datapoints tensor to be feedforwarded
+       * hidden_states - None or tupl of the format (torch.tensor, torch.tensor), representing the hidden states of the network. Internally, if None, consider zeros of the proper format).
+      
+   * sample_weights():
+      
+      Assings internally its weights to be used on feedforward operations by sampling it from its GaussianVariational
+      
+   * get_frozen_weights():
+   
+      Assings internally for its weights deterministaclly the mean of its GaussianVariational sampler.
+      
+---
+
 ## class BayesianEmbedding
 ### blitz.modules.BayesianEmbedding (num_embeddings, embedding_dim, padding_idx=None, max_norm=None, norm_type=2.0, scale_grad_by_freq=False, sparse=False, prior_sigma_1 = 1, prior_sigma_2 = 0.002, prior_pi = 0.5, freeze = False,)
 
@@ -265,7 +309,7 @@ Inherits from BayesianModule
       
       Performs a embedding operation with sampled weights. If the model is frozen uses only the expected values.
       
-      Returns  tuple of format (torch.tensor, (torch.tensor, torch.tensor)), representing the output and hidden state of the LSTM layer
+      Returns  tuple of format (torch.tensor, (torch.tensor, torch.tensor)), representing the output and hidden state of the GRU layer
       
       Description
       ##### Parameters
