@@ -192,7 +192,7 @@ DESCRIPTION
 ---
 
 ## class BayesianLSTM
-### blitz.modules.BayesianLSTM(in_features, out_features, bias=True, prior_sigma_1 = 1, prior_sigma_2 = 0.002, prior_pi = 0.5, freeze = False)
+### blitz.modules.BayesianLSTM(in_features, out_features, bias=True, prior_sigma_1 = 1, prior_sigma_2 = 0.002, prior_pi = 0.5, freeze = False, peephole = False)
 
 Bayesian LSTM layer, implements the LSTM layer using the weight uncertainty tools proposed on Weight Uncertainity on Neural Networks (Bayes by Backprop paper). 
 
@@ -210,6 +210,7 @@ Inherits from BayesianModule
   * posterior_mu_init float -> posterior mean for the weight mu init
   * posterior_rho_init float -> posterior mean for the weight rho init
   * freeze -> wheter the model is instaced as frozen (will use deterministic weights on the feedforward op)
+  * peephole bool -> if the lstm shoudl use peephole connections rather than default ones
   * prior_dist -> torch.distributions.distribution.Distribution corresponding to a prior distribution different than a normal / scale mixture normal; if you pass that, the prior distribution will be that one and prior_sigma1 and prior_sigma2 and prior_pi can be dismissed. - Note that there is a torch issue that may output you logprob as NaN, so beware of the prior dist you are using.
   
 #### Methods:
