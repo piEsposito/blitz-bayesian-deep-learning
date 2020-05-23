@@ -34,13 +34,15 @@ class BayesianLSTM(BayesianModule):
                  posterior_mu_init = 0,
                  posterior_rho_init = -6.0,
                  freeze = False,
-                 prior_dist = None):
+                 prior_dist = None,
+                 peephole = False):
         
         super().__init__()
         self.in_features = in_features
         self.out_features = out_features
         self.use_bias = bias
         self.freeze = freeze
+        self.peephole = peephole
         
         self.posterior_mu_init = posterior_mu_init
         self.posterior_rho_init = posterior_rho_init
@@ -138,16 +140,26 @@ class BayesianLSTM(BayesianModule):
         for t in range(seq_sz):
             x_t = x[:, t, :]
             # batch the computations into a single matrix multiplication
-            gates = x_t @ weight_ih + h_t @ weight_hh + bias
             
-            i_t, f_t, g_t, o_t = (
+            if self.peephole:
+                gates = x_t @ weight_ih + c_t @ weight_hh + bias
+            else:
+                gates = x_t @ weight_ih + h_t @ weight_hh + bias
+                g_t = torch.tanh(gates[:, HS*2:HS*3])
+            
+            i_t, f_t, o_t = (
                 torch.sigmoid(gates[:, :HS]), # input
                 torch.sigmoid(gates[:, HS:HS*2]), # forget
-                torch.tanh(gates[:, HS*2:HS*3]),
                 torch.sigmoid(gates[:, HS*3:]), # output
             )
-            c_t = f_t * c_t + i_t * g_t
-            h_t = o_t * torch.tanh(c_t)
+            
+            if self.peephole:
+                c_t = f_t * c_t + i_t * torch.sigmoid(x_t @ weight_ih + bias)[:, HS*2:HS*3]
+                h_t = torch.sigmoid(o_t * c_t)
+            else:
+                c_t = f_t * c_t + i_t * g_t
+                h_t = o_t * torch.tanh(c_t)
+                
             hidden_seq.append(h_t.unsqueeze(0))
             
         hidden_seq = torch.cat(hidden_seq, dim=0)
@@ -180,23 +192,33 @@ class BayesianLSTM(BayesianModule):
         for t in range(seq_sz):
             x_t = x[:, t, :]
             # batch the computations into a single matrix multiplication
-            gates = x_t @ weight_ih + h_t @ weight_hh + bias
             
-            i_t, f_t, g_t, o_t = (
+            if self.peephole:
+                gates = x_t @ weight_ih + c_t @ weight_hh + bias
+            else:
+                gates = x_t @ weight_ih + h_t @ weight_hh + bias
+                g_t = torch.tanh(gates[:, HS*2:HS*3])
+            
+            i_t, f_t, o_t = (
                 torch.sigmoid(gates[:, :HS]), # input
                 torch.sigmoid(gates[:, HS:HS*2]), # forget
-                torch.tanh(gates[:, HS*2:HS*3]),
                 torch.sigmoid(gates[:, HS*3:]), # output
             )
-            c_t = f_t * c_t + i_t * g_t
-            h_t = o_t * torch.tanh(c_t)
+            
+            if self.peephole:
+                c_t = f_t * c_t + i_t * torch.sigmoid(x_t @ weight_ih + bias)[:, HS*2:HS*3]
+                h_t = torch.sigmoid(o_t * c_t)
+            else:
+                c_t = f_t * c_t + i_t * g_t
+                h_t = o_t * torch.tanh(c_t)
+                
             hidden_seq.append(h_t.unsqueeze(0))
             
         hidden_seq = torch.cat(hidden_seq, dim=0)
         # reshape from shape (sequence, batch, feature) to (batch, sequence, feature)
         hidden_seq = hidden_seq.transpose(0, 1).contiguous()
         
-        return hidden_seq, (h_t, c_t)         
+        return hidden_seq, (h_t, c_t)
 
     def forward(self,
                 x,
