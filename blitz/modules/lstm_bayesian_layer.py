@@ -155,7 +155,7 @@ class BayesianLSTM(BayesianModule):
             
             if self.peephole:
                 c_t = f_t * c_t + i_t * torch.sigmoid(x_t @ weight_ih + bias)[:, HS*2:HS*3]
-                h_t = torch.sigmoid(o_t * c_t)
+                h_t = torch.tanh(o_t * c_t)
             else:
                 c_t = f_t * c_t + i_t * g_t
                 h_t = o_t * torch.tanh(c_t)
