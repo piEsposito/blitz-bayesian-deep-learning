@@ -4,7 +4,7 @@ import types
 from blitz.modules.weight_sampler import GaussianVariational
 from blitz.losses import kl_divergence_from_nn
 from blitz.modules.base_bayesian_module import BayesianModule
-from blitz.modules import BayesianLSTM
+from blitz.modules import BayesianLSTM, BayesianGRU
 
 def copy_func(f, name=None):
     '''
@@ -37,7 +37,7 @@ def Flipout(nn_module):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
         
-        if nn_module not in [BayesianLSTM, ]:
+        if nn_module not in [BayesianLSTM, BayesianGRU]:
             def forward(self, x):
                 outputs = super().forward_frozen(x)
 
@@ -67,7 +67,11 @@ def Flipout(nn_module):
 
                     return (perturbed_outputs + outputs, states + perturbed_states)
                 
-                return (perturbed_outputs + outputs, (states[i] + perturbed_states[i] for i in range(len(states))))
+                #lstm specific tuple_state case
+                if type(states) == tuple:
+                    return (perturbed_outputs + outputs, (states[i] + perturbed_states[i] for i in range(len(states))))
+                #general case has only one state
+                return perturbed_outputs + outputs, states + perturbed_states
 
     return Flipout
 
