@@ -5,9 +5,9 @@ from blitz.modules.base_bayesian_module import BayesianModule
 from blitz.modules.weight_sampler import GaussianVariational, ScaleMixturePrior
 
 
-class BayesianLSTM(BayesianModule):
+class BayesianGRU(BayesianModule):
     """
-    Bayesian LSTM layer, implements the linear layer proposed on Weight Uncertainity on Neural Networks
+    Bayesian GRU layer, implements the linear layer proposed on Weight Uncertainity on Neural Networks
     (Bayes by Backprop paper).
 
     Its objective is be interactable with torch nn.Module API, being able even to be chained in nn.Sequential models with other non-this-lib layers
@@ -126,10 +126,9 @@ class BayesianLSTM(BayesianModule):
         
         #if no hidden state, we are using zeros
         if hidden_states is None:
-            h_t, c_t = (torch.zeros(bs, self.out_features).to(x.device), 
-                        torch.zeros(bs, self.out_features).to(x.device))
+            h_t = torch.zeros(bs, self.out_features).to(x.device)
         else:
-            h_t, c_t = hidden_states
+            h_t = hidden_states
         
         #simplifying our out features, and hidden seq list
         HS = self.out_features
@@ -138,23 +137,23 @@ class BayesianLSTM(BayesianModule):
         for t in range(seq_sz):
             x_t = x[:, t, :]
             # batch the computations into a single matrix multiplication
-            gates = x_t @ weight_ih + h_t @ weight_hh + bias
-            
-            i_t, f_t, g_t, o_t = (
-                torch.sigmoid(gates[:, :HS]), # input
-                torch.sigmoid(gates[:, HS:HS*2]), # forget
-                torch.tanh(gates[:, HS*2:HS*3]),
-                torch.sigmoid(gates[:, HS*3:]), # output
+            A_t = x_t @ weight_ih[:, :HS*2] + h_t @ weight_hh[:, :HS*2] + bias[:HS*2]
+
+            r_t, z_t = (
+                torch.sigmoid(A_t[:, :HS]),
+                torch.sigmoid(A_t[:, HS:HS*2])
             )
-            c_t = f_t * c_t + i_t * g_t
-            h_t = o_t * torch.tanh(c_t)
+
+            n_t = torch.tanh(x_t @ weight_ih[:, HS*2:HS*3] + bias[HS*2:HS*3] + r_t * (h_t @ weight_hh[:, HS*3:HS*4] + bias[HS*3:HS*4]))
+            h_t = (1 - z_t) * n_t + z_t * h_t
+
             hidden_seq.append(h_t.unsqueeze(0))
             
         hidden_seq = torch.cat(hidden_seq, dim=0)
         # reshape from shape (sequence, batch, feature) to (batch, sequence, feature)
         hidden_seq = hidden_seq.transpose(0, 1).contiguous()
         
-        return hidden_seq, (h_t, c_t)
+        return hidden_seq, h_t
 
     def forward_frozen(self,
                        x,
@@ -168,10 +167,9 @@ class BayesianLSTM(BayesianModule):
         
         #if no hidden state, we are using zeros
         if hidden_states is None:
-            h_t, c_t = (torch.zeros(bs, self.out_features).to(x.device), 
-                        torch.zeros(bs, self.out_features).to(x.device))
+            h_t = torch.zeros(bs, self.out_features).to(x.device)
         else:
-            h_t, c_t = hidden_states
+            h_t = hidden_states
         
         #simplifying our out features, and hidden seq list
         HS = self.out_features
@@ -180,23 +178,23 @@ class BayesianLSTM(BayesianModule):
         for t in range(seq_sz):
             x_t = x[:, t, :]
             # batch the computations into a single matrix multiplication
-            gates = x_t @ weight_ih + h_t @ weight_hh + bias
-            
-            i_t, f_t, g_t, o_t = (
-                torch.sigmoid(gates[:, :HS]), # input
-                torch.sigmoid(gates[:, HS:HS*2]), # forget
-                torch.tanh(gates[:, HS*2:HS*3]),
-                torch.sigmoid(gates[:, HS*3:]), # output
+            A_t = x_t @ weight_ih[:, :HS*2] + h_t @ weight_hh[:, :HS*2] + bias[:HS*2]
+
+            r_t, z_t = (
+                torch.sigmoid(A_t[:, :HS]),
+                torch.sigmoid(A_t[:, HS:HS*2])
             )
-            c_t = f_t * c_t + i_t * g_t
-            h_t = o_t * torch.tanh(c_t)
+
+            n_t = torch.tanh(x_t @ weight_ih[:, HS*2:HS*3] + bias[HS*2:HS*3] + r_t * (h_t @ weight_hh[:, HS*3:HS*4] + bias[HS*3:HS*4]))
+            h_t = (1 - z_t) * n_t + z_t * h_t
+
             hidden_seq.append(h_t.unsqueeze(0))
             
         hidden_seq = torch.cat(hidden_seq, dim=0)
         # reshape from shape (sequence, batch, feature) to (batch, sequence, feature)
         hidden_seq = hidden_seq.transpose(0, 1).contiguous()
         
-        return hidden_seq, (h_t, c_t)         
+        return hidden_seq, h_t         
 
     def forward(self,
                 x,
