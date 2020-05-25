@@ -2,8 +2,6 @@
 
 # Index:
   * [Decorator variational_estimator](#Variational-Estimator)
-  * [Layer wrapper flipout](#Flipout)
-  * [Layer wrapper radial](#Radial)
 ---
 ## Variational Estimator
 
