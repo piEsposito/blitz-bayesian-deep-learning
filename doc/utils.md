@@ -53,20 +53,3 @@ Dynamically adds some util methods to object that inherits from torch.nn.Module 
     * mean_: torch.tensor -> mean of the perdictions along each of the features of each datapoint on the batch axis, for each feature of ea
     * std_: torch.tensor -> std of the predictions along each of the features of each datapoint on the batch axis
   
- ---
-  
-## Radial
-Changer the layer's weight sampler sampling method changed to divide its epsilon per its epsilon norm, following the Radial BNN paper.
-
-### Parameters:
-  * nn_module: -> torch.nn.Module, blitz.modules.base_bayesian_module.BayesianModule layer class to have its weight sampler sampling method changed to divide its epsilon per its epsilon norm, following the Radial BNN paper.
-  
----
-
-## Flipout
-Changer the layer's feedforward forward method operation to perform the Flipout operation.
-
-### Parameters:
-  * nn_module: -> torch.nn.Module, blitz.modules.base_bayesian_module.BayesianModule layer class to have its feedforward operation feedforward method changed to perform the Flipout operation.
-  
----
