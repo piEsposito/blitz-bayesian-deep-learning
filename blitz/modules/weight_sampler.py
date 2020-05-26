@@ -33,7 +33,7 @@ class GaussianVariational(nn.Module):
         self.w = self.mu + self.sigma * self.eps_w
         return self.w
 
-    def log_posterior(self):
+    def log_posterior(self, w=None):
 
         """
         Calculates the log_likelihood for each of the weights sampled as a part of the complexity cost
@@ -43,9 +43,11 @@ class GaussianVariational(nn.Module):
         """
 
         assert (self.w is not None), "You can only have a log posterior for W if you've already sampled it"
-
+        if w is None:
+            w = self.w
+        
         log_sqrt2pi = np.log(np.sqrt(2*self.pi))
-        log_posteriors =  -log_sqrt2pi - torch.log(self.sigma) - (((self.w - self.mu) ** 2)/(2 * self.sigma ** 2))
+        log_posteriors =  -log_sqrt2pi - torch.log(self.sigma) - (((w - self.mu) ** 2)/(2 * self.sigma ** 2))
         return log_posteriors.mean()
 
 class ScaleMixturePrior(nn.Module):
