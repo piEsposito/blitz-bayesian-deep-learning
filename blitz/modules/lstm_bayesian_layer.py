@@ -1,11 +1,11 @@
 import torch
 from torch import nn
 from torch.nn import functional as F
-from blitz.modules.base_bayesian_module import BayesianModule
+from blitz.modules.base_bayesian_module import BayesianModule, BayesianRNN
 from blitz.modules.weight_sampler import GaussianVariational, ScaleMixturePrior
 
 
-class BayesianLSTM(BayesianModule):
+class BayesianLSTM(BayesianRNN):
     """
     Bayesian LSTM layer, implements the linear layer proposed on Weight Uncertainity on Neural Networks
     (Bayes by Backprop paper).
@@ -35,9 +35,10 @@ class BayesianLSTM(BayesianModule):
                  posterior_rho_init = -6.0,
                  freeze = False,
                  prior_dist = None,
-                 peephole = False):
+                 peephole = False,
+                 **kwargs):
         
-        super().__init__()
+        super().__init__(**kwargs)
         self.in_features = in_features
         self.out_features = out_features
         self.use_bias = bias
@@ -75,6 +76,8 @@ class BayesianLSTM(BayesianModule):
         self.weight_hh_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         self.bias_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         
+        self.init_sharpen_parameters()
+        
         self.log_prior = 0
         self.log_variational_posterior = 0
     
@@ -91,7 +94,7 @@ class BayesianLSTM(BayesianModule):
             b_log_prior = self.bias_prior_dist.log_prior(b)
             
         else:
-            b = 0
+            b = None
             b_log_posterior = 0
             b_log_prior = 0
             
@@ -101,6 +104,9 @@ class BayesianLSTM(BayesianModule):
         self.log_variational_posterior = self.weight_hh_sampler.log_posterior() + b_log_posterior + self.weight_ih_sampler.log_posterior()
         
         self.log_prior = self.weight_ih_prior_dist.log_prior(weight_ih) + b_log_prior + self.weight_hh_prior_dist.log_prior(weight_hh)
+        
+        
+        self.ff_parameters = [weight_ih, weight_hh, bias]
         return weight_ih, weight_hh, bias
         
     def get_frozen_weights(self):
@@ -118,9 +124,18 @@ class BayesianLSTM(BayesianModule):
     
     def forward_(self,
                  x,
-                 hidden_states):
+                 hidden_states,
+                 sharpen_loss):
         
-        weight_ih, weight_hh, bias = self.sample_weights()
+        if self.loss_to_sharpen is not None:
+            sharpen_loss = self.loss_to_sharpen
+            weight_ih, weight_hh, bias = self.sharpen_posterior(loss=sharpen_loss, input_shape=x.shape)
+        elif (sharpen_loss is not None):
+            sharpen_loss = sharpen_loss
+            weight_ih, weight_hh, bias = self.sharpen_posterior(loss=sharpen_loss, input_shape=x.shape)
+        
+        else:
+            weight_ih, weight_hh, bias = self.sample_weights()
 
         #Assumes x is of shape (batch, sequence, feature)
         bs, seq_sz, _ = x.size()
@@ -222,10 +237,14 @@ class BayesianLSTM(BayesianModule):
 
     def forward(self,
                 x,
-                hidden_states=None):
+                hidden_states=None,
+                sharpen_loss=None):
 
         if self.freeze:
             return self.forward_frozen(x, hidden_states)
-
-        return self.forward_(x, hidden_states)   
+        
+        if not self.sharpen:
+            sharpen_posterior = False
+            
+        return self.forward_(x, hidden_states, sharpen_loss)   
         

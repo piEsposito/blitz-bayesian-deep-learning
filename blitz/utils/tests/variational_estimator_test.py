@@ -4,7 +4,7 @@ from torch import nn
 import torchvision.datasets as dsets
 import torchvision.transforms as transforms
 
-from blitz.modules import BayesianConv2d, BayesianLinear, BayesianLSTM, BayesianEmbedding, GaussianVariational
+from blitz.modules import BayesianConv2d, BayesianLinear, BayesianLSTM, BayesianEmbedding, GaussianVariational, BayesianGRU
 from blitz.losses import kl_divergence_from_nn
 from blitz.utils import variational_estimator
 
@@ -161,6 +161,30 @@ class TestVariationalInference(unittest.TestCase):
         self.assertEqual(out__.shape, std__.shape)
 
         self.assertEqual((std__==0).all(), torch.tensor(True))
+        
+    def test_sharpen_forward(self):
+        
+        @variational_estimator
+        class BayesianMLP(nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.lstm1 = BayesianLSTM(3, 5, sharpen=True)
+                self.gru1 = BayesianGRU(5, 3, sharpen=True)
+                
+            def forward(self, x):
+                a1, _ = self.lstm1(x)
+                a2, _ = self.gru1(a1)
+                return a2
+            
+        net = BayesianMLP()
+        criterion = nn.MSELoss()
+        in_tensor = torch.ones(4, 5, 3)
+        label = in_tensor.clone().detach().normal_()
+        
+        y_hat = net.forward_with_sharpening(in_tensor, labels=label, criterion=criterion)
+        
+        criterion(y_hat, label).backward()
+        pass
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ import torch
 
 from blitz.modules.weight_sampler import GaussianVariational
 from blitz.losses import kl_divergence_from_nn
-from blitz.modules.base_bayesian_module import BayesianModule
+from blitz.modules.base_bayesian_module import BayesianModule, BayesianRNN
 
 def variational_estimator(nn_class):
     """
@@ -134,6 +134,26 @@ def variational_estimator(nn_class):
         return result.mean(dim=0), result.std(dim=0)
     
     setattr(nn_class, 'mfvi_forward', mfvi_forward)
+    
+    def forward_with_sharpening(self, x, labels, criterion):
+        preds = self(x)
+        loss = criterion(preds, labels)
+        
+        for module in self.modules():
+            if isinstance(module, (BayesianRNN)):
+                module.loss_to_sharpen = loss
+                
+        y_hat: self(x)
+        
+        for module in self.modules():
+            if isinstance(module, (BayesianRNN)):
+                module.loss_to_sharpen = None
+                
+        return self(x,)
+        
+    setattr(nn_class, 'forward_with_sharpening', forward_with_sharpening)
+        
+        
         
 
     return nn_class
