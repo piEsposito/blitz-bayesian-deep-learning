@@ -60,12 +60,15 @@ for epoch in range(100):
         loss = classifier.sample_elbo(inputs=datapoints.to(device),
                            labels=labels.to(device),
                            criterion=criterion,
-                           sample_nbr=3)
+                           sample_nbr=3,
+                           complexity_cost_weight=1/50000)
+        #print(loss)
         loss.backward()
         optimizer.step()
         
         iteration += 1
-        if iteration%1000==0:
+        if iteration%250==0:
+            print(loss)
             correct = 0
             total = 0
             with torch.no_grad():

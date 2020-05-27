@@ -73,7 +73,8 @@ for epoch in range(1000):
         loss = regressor.sample_elbo(inputs=datapoints.to(device),
                            labels=labels.to(device),
                            criterion=criterion,
-                           sample_nbr=3)
+                           sample_nbr=3,
+                           complexity_cost_weight=1/X_train.shape[0])
         loss.backward()
         optimizer.step()
         

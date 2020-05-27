@@ -47,8 +47,8 @@ class GaussianVariational(nn.Module):
             w = self.w
         
         log_sqrt2pi = np.log(np.sqrt(2*self.pi))
-        log_posteriors =  -log_sqrt2pi - torch.log(self.sigma) - (((w - self.mu) ** 2)/(2 * self.sigma ** 2))
-        return log_posteriors.mean()
+        log_posteriors =  -log_sqrt2pi - torch.log(self.sigma) - (((w - self.mu) ** 2)/(2 * self.sigma ** 2)) - 0.5
+        return log_posteriors.sum()
 
 class ScaleMixturePrior(nn.Module):
     #Calculates a Scale Mixture Prior distribution for the prior part of the complexity cost on Bayes by Backprop paper
@@ -90,4 +90,4 @@ class ScaleMixturePrior(nn.Module):
 
         prior_pdf = (self.pi * prob_n1 + (1 - self.pi) * prob_n2)
 
-        return (torch.log(prior_pdf)).mean()
+        return (torch.log(prior_pdf) - 0.5).sum()
