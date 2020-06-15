@@ -23,7 +23,7 @@ Inherits from torch.nn.Module
 
 Bayesian Linear layer, implements the linear layer proposed on Weight Uncertainity on Neural Networks (Bayes by Backprop paper). 
 
-Creates weight samplers of the class GaussianVariational for the weights and biases to be used on its feedforward ops.
+Creates weight samplers of the class TrainableRandomDistribution for the weights and biases to be used on its feedforward ops.
 
 Inherits from BayesianModule
 
@@ -196,7 +196,7 @@ DESCRIPTION
 
 Bayesian LSTM layer, implements the LSTM layer using the weight uncertainty tools proposed on Weight Uncertainity on Neural Networks (Bayes by Backprop paper). 
 
-Creates weight samplers of the class GaussianVariational for the weights and biases to be used on its feedforward ops.
+Creates weight samplers of the class TrainableRandomDistribution for the weights and biases to be used on its feedforward ops.
 
 Inherits from BayesianModule
 
@@ -227,11 +227,11 @@ Inherits from BayesianModule
       
    * sample_weights():
       
-      Assings internally its weights to be used on feedforward operations by sampling it from its GaussianVariational
+      Assings internally its weights to be used on feedforward operations by sampling it from its TrainableRandomDistribution
       
    * get_frozen_weights():
    
-      Assings internally for its weights deterministaclly the mean of its GaussianVariational sampler.
+      Assings internally for its weights deterministaclly the mean of its TrainableRandomDistribution sampler.
       
 ---
 
@@ -240,7 +240,7 @@ Inherits from BayesianModule
 
 Bayesian GRU layer, implements the GRU layer using the weight uncertainty tools proposed on Weight Uncertainity on Neural Networks (Bayes by Backprop paper). 
 
-Creates weight samplers of the class GaussianVariational for the weights and biases to be used on its feedforward ops.
+Creates weight samplers of the class TrainableRandomDistribution for the weights and biases to be used on its feedforward ops.
 
 Inherits from BayesianModule
 
@@ -270,11 +270,11 @@ Inherits from BayesianModule
       
    * sample_weights():
       
-      Assings internally its weights to be used on feedforward operations by sampling it from its GaussianVariational
+      Assings internally its weights to be used on feedforward operations by sampling it from its TrainableRandomDistribution
       
    * get_frozen_weights():
    
-      Assings internally for its weights deterministaclly the mean of its GaussianVariational sampler.
+      Assings internally for its weights deterministaclly the mean of its TrainableRandomDistribution sampler.
       
 ---
 
@@ -283,7 +283,7 @@ Inherits from BayesianModule
 
 Bayesian Embedding layer, implements the Embedding layer using the weight uncertainty tools proposed on Weight Uncertainity on Neural Networks (Bayes by Backprop paper). 
 
-Creates weight samplers of the class GaussianVariational for the weights and biases to be used on its feedforward ops.
+Creates weight samplers of the class TrainableRandomDistribution for the weights and biases to be used on its feedforward ops.
 
 Inherits from BayesianModule
 
@@ -319,6 +319,6 @@ Inherits from BayesianModule
       
    * sample_weights():
       
-      Assings internally its weights to be used on feedforward operations by sampling it from its GaussianVariational
+      Assings internally its weights to be used on feedforward operations by sampling it from its TrainableRandomDistribution
       
     

@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from blitz.modules.base_bayesian_module import BayesianModule
-from blitz.modules.weight_sampler import GaussianVariational, ScaleMixturePrior
+from blitz.modules.weight_sampler import TrainableRandomDistribution, ScaleMixturePrior
 
 
 class BayesianLinear(BayesianModule):
@@ -32,7 +32,7 @@ class BayesianLinear(BayesianModule):
                  prior_sigma_2 = 0.4,
                  prior_pi = 1,
                  posterior_mu_init = 0,
-                 posterior_rho_init = -6.0,
+                 posterior_rho_init = -7.0,
                  freeze = False,
                  prior_dist = None):
         super().__init__()
@@ -56,12 +56,12 @@ class BayesianLinear(BayesianModule):
         # Variational weight parameters and sample
         self.weight_mu = nn.Parameter(torch.Tensor(out_features, in_features).normal_(posterior_mu_init, 0.1))
         self.weight_rho = nn.Parameter(torch.Tensor(out_features, in_features).normal_(posterior_rho_init, 0.1))
-        self.weight_sampler = GaussianVariational(self.weight_mu, self.weight_rho)
+        self.weight_sampler = TrainableRandomDistribution(self.weight_mu, self.weight_rho)
 
         # Variational bias parameters and sample
         self.bias_mu = nn.Parameter(torch.Tensor(out_features).normal_(posterior_mu_init, 0.1))
         self.bias_rho = nn.Parameter(torch.Tensor(out_features).normal_(posterior_rho_init, 0.1))
-        self.bias_sampler = GaussianVariational(self.bias_mu, self.bias_rho)
+        self.bias_sampler = TrainableRandomDistribution(self.bias_mu, self.bias_rho)
 
         # Priors (as BBP paper)
         self.weight_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)

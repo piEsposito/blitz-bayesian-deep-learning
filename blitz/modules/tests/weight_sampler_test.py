@@ -1,6 +1,6 @@
 import unittest
 import torch
-from blitz.modules.weight_sampler import GaussianVariational, ScaleMixturePrior
+from blitz.modules.weight_sampler import TrainableRandomDistribution, ScaleMixturePrior
 from blitz.modules import BayesianLinear
 
 class TestWeightSampler(unittest.TestCase):
@@ -11,7 +11,7 @@ class TestWeightSampler(unittest.TestCase):
         mu = torch.Tensor(10, 10).uniform_(-1, 1)
         rho = torch.Tensor(10, 10).uniform_(-1, 1)
 
-        dist = GaussianVariational(mu, rho)
+        dist = TrainableRandomDistribution(mu, rho)
         s1 = dist.sample()
         s2 = dist.sample()
 
@@ -26,7 +26,7 @@ class TestWeightSampler(unittest.TestCase):
         mu = torch.Tensor(10, 10).uniform_(-1, 1)
         rho = torch.Tensor(10, 10).uniform_(-1, 1)
 
-        dist = GaussianVariational(mu, rho)
+        dist = TrainableRandomDistribution(mu, rho)
         s1 = dist.sample()
 
         log_posterior = dist.log_posterior()
@@ -37,7 +37,7 @@ class TestWeightSampler(unittest.TestCase):
         mu = torch.Tensor(10, 10).uniform_(-1, 1)
         rho = torch.Tensor(10, 10).uniform_(-1, 1)
 
-        dist = GaussianVariational(mu, rho)
+        dist = TrainableRandomDistribution(mu, rho)
         s1 = dist.sample()
 
         log_posterior = dist.log_posterior()
@@ -55,7 +55,7 @@ class TestWeightSampler(unittest.TestCase):
         mu = torch.Tensor(10, 10).uniform_(-1, 1)
         rho = torch.Tensor(10, 10).uniform_(-1, 1)
 
-        dist = GaussianVariational(mu, rho)
+        dist = TrainableRandomDistribution(mu, rho)
         s1 = dist.sample()
 
         log_posterior = dist.log_posterior()

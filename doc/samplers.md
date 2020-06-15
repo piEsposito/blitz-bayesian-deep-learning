@@ -1,12 +1,12 @@
 # Weight a priori and a posteriori sampler
 
 # Index:
-  * [GaussianVariational](#class-GaussianVariational)
+  * [TrainableRandomDistribution](#class-TrainableRandomDistribution)
   * [ScaleMixturePrior](#class-ScaleMixturePrior)
 
 ---
-## class GaussianVariational
-### blitz.modules.weight_sampler.GaussianVariational(mu, rho)
+## class TrainableRandomDistribution
+### blitz.modules.weight_sampler.TrainableRandomDistribution(mu, rho)
 Creates a weight sampler in order to introduce uncertainity on the layers weights.
 #### Parameters:
   * mu - torch.tensor with two or more dimensions: mu parameter of the Gaussian weight sampler proposed on Bayes by Backprop paper

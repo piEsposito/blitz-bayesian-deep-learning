@@ -73,8 +73,8 @@ def main():
     else:
         model.cuda()
 
-    model.freeze_()
-    freeze = True
+    #model.freeze_()
+    #freeze = True
 
     # optionally resume from a checkpoint
     if args.resume:
@@ -164,9 +164,9 @@ def train(train_loader, model, criterion, optimizer, epoch):
 
     end = time.time()
 
-    if epoch == 3:
-        model.MOPED_()
-        freeze = False
+    #if epoch == 3:
+     #   model.MOPED_()
+      #  freeze = False
 
     for i, (input, target) in enumerate(train_loader):
 
@@ -182,7 +182,8 @@ def train(train_loader, model, criterion, optimizer, epoch):
             loss = model.sample_elbo(inputs=input,
                            labels=target,
                            criterion=criterion,
-                           sample_nbr=10)
+                           sample_nbr=3,
+			               complexity_cost_weight=1/50000)
         else:
             output = model(input)
             loss = criterion(output, target)

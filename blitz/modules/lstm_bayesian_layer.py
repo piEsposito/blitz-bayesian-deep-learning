@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from blitz.modules.base_bayesian_module import BayesianModule, BayesianRNN
-from blitz.modules.weight_sampler import GaussianVariational, ScaleMixturePrior
+from blitz.modules.weight_sampler import TrainableRandomDistribution, ScaleMixturePrior
 
 
 class BayesianLSTM(BayesianRNN):
@@ -56,19 +56,19 @@ class BayesianLSTM(BayesianRNN):
         # Variational weight parameters and sample for weight ih
         self.weight_ih_mu = nn.Parameter(torch.Tensor(in_features, out_features * 4).normal_(posterior_mu_init, 0.1))
         self.weight_ih_rho = nn.Parameter(torch.Tensor(in_features, out_features * 4).normal_(posterior_rho_init, 0.1))
-        self.weight_ih_sampler = GaussianVariational(self.weight_ih_mu, self.weight_ih_rho)
+        self.weight_ih_sampler = TrainableRandomDistribution(self.weight_ih_mu, self.weight_ih_rho)
         self.weight_ih = None
         
         # Variational weight parameters and sample for weight hh
         self.weight_hh_mu = nn.Parameter(torch.Tensor(out_features, out_features * 4).normal_(posterior_mu_init, 0.1))
         self.weight_hh_rho = nn.Parameter(torch.Tensor(out_features, out_features * 4).normal_(posterior_rho_init, 0.1))
-        self.weight_hh_sampler = GaussianVariational(self.weight_hh_mu, self.weight_hh_rho)
+        self.weight_hh_sampler = TrainableRandomDistribution(self.weight_hh_mu, self.weight_hh_rho)
         self.weight_hh = None
         
         # Variational weight parameters and sample for bias
         self.bias_mu = nn.Parameter(torch.Tensor(out_features * 4).normal_(posterior_mu_init, 0.1))
         self.bias_rho = nn.Parameter(torch.Tensor(out_features * 4).normal_(posterior_rho_init, 0.1))
-        self.bias_sampler = GaussianVariational(self.bias_mu, self.bias_rho)
+        self.bias_sampler = TrainableRandomDistribution(self.bias_mu, self.bias_rho)
         self.bias=None
         
         #our prior distributions

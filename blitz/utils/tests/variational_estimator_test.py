@@ -4,7 +4,7 @@ from torch import nn
 import torchvision.datasets as dsets
 import torchvision.transforms as transforms
 
-from blitz.modules import BayesianConv2d, BayesianLinear, BayesianLSTM, BayesianEmbedding, GaussianVariational, BayesianGRU
+from blitz.modules import BayesianConv2d, BayesianLinear, BayesianLSTM, BayesianEmbedding, TrainableRandomDistribution, BayesianGRU
 from blitz.losses import kl_divergence_from_nn
 from blitz.utils import variational_estimator
 

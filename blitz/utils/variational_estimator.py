@@ -1,6 +1,6 @@
 import torch
 
-from blitz.modules.weight_sampler import GaussianVariational
+from blitz.modules.weight_sampler import TrainableRandomDistribution
 from blitz.losses import kl_divergence_from_nn
 from blitz.modules.base_bayesian_module import BayesianModule, BayesianRNN
 
@@ -110,7 +110,7 @@ def variational_estimator(nn_class):
             if isinstance(module, (BayesianModule)):
 
                 for attr in module.modules():
-                    if isinstance(attr, (GaussianVariational)):
+                    if isinstance(attr, (TrainableRandomDistribution)):
                         attr.rho.data = torch.log(torch.expm1(delta * torch.abs(attr.mu.data) ) + 1e-10)
         self.unfreeze_()
 
