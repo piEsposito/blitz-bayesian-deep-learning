@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from blitz.modules.base_bayesian_module import BayesianModule, BayesianRNN
-from blitz.modules.weight_sampler import TrainableRandomDistribution, ScaleMixturePrior
+from blitz.modules.weight_sampler import TrainableRandomDistribution, PriorWeightDistribution
 
 
 class BayesianGRU(BayesianRNN):
@@ -70,9 +70,9 @@ class BayesianGRU(BayesianRNN):
         self.bias=None
         
         #our prior distributions
-        self.weight_ih_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
-        self.weight_hh_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
-        self.bias_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        self.weight_ih_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        self.weight_hh_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         
         self.init_sharpen_parameters()
         

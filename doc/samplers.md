@@ -2,7 +2,7 @@
 
 # Index:
   * [TrainableRandomDistribution](#class-TrainableRandomDistribution)
-  * [ScaleMixturePrior](#class-ScaleMixturePrior)
+  * [PriorWeightDistribution](#class-PriorWeightDistribution)
 
 ---
 ## class TrainableRandomDistribution
@@ -22,8 +22,8 @@ Creates a weight sampler in order to introduce uncertainity on the layers weight
     
 ---
 
-## class ScaleMixturePrior
-### blitz.modules.weight_sampler.ScaleMixturePrior(pi, sigma1, sigma2)
+## class PriorWeightDistribution
+### blitz.modules.weight_sampler.PriorWeightDistribution(pi, sigma1, sigma2)
 Creates a log-likelihood calculator for any matrix w passed on the log_prior method, considering a Scaled Gaussian Mixture model of N(0, sigma1) with weight pi (parameter) and N(0, sigma2) with weight (1-pi) parameter, for each distribution, following the idea on Bayes by Backprop paper.
 #### Parameters:
   * pi - float corresponding to a factor for scaling the mixture models; AND
@@ -35,7 +35,7 @@ Creates a log-likelihood calculator for any matrix w passed on the log_prior met
 #### Methods:
   * log_prior(w):
   
-    Returns the torch.tensor corresponding to the summed log-likelihood of the matrix of weights "w" given ScaleMixturePrior object scaled Gaussian Mixture model parameters.
+    Returns the torch.tensor corresponding to the summed log-likelihood of the matrix of weights "w" given PriorWeightDistribution object scaled Gaussian Mixture model parameters.
     ##### Parameters:
       * w - torch.tensor
 ---

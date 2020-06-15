@@ -4,7 +4,7 @@ from torch import nn
 from torch.nn import functional as F
 
 from blitz.modules.base_bayesian_module import BayesianModule
-from blitz.modules.weight_sampler import TrainableRandomDistribution, ScaleMixturePrior
+from blitz.modules.weight_sampler import TrainableRandomDistribution, PriorWeightDistribution
 
 class BayesianConv1d(BayesianModule):
 
@@ -83,8 +83,8 @@ class BayesianConv1d(BayesianModule):
         self.bias_sampler = TrainableRandomDistribution(self.bias_mu, self.bias_rho)
 
         # Priors (as BBP paper)
-        self.weight_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
-        self.bias_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        self.weight_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         self.log_prior = 0
         self.log_variational_posterior = 0
 
@@ -211,8 +211,8 @@ class BayesianConv2d(BayesianModule):
         self.bias_sampler = TrainableRandomDistribution(self.bias_mu, self.bias_rho)
 
         # Priors (as BBP paper)
-        self.weight_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
-        self.bias_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        self.weight_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         self.log_prior = 0
         self.log_variational_posterior = 0
 
@@ -339,8 +339,8 @@ class BayesianConv3d(BayesianModule):
         self.bias_sampler = TrainableRandomDistribution(self.bias_mu, self.bias_rho)
 
         # Priors (as BBP paper)
-        self.weight_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
-        self.bias_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        self.weight_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         self.log_prior = 0
         self.log_variational_posterior = 0
 
