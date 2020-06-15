@@ -1,6 +1,6 @@
 import unittest
 import torch
-from blitz.modules.weight_sampler import TrainableRandomDistribution, ScaleMixturePrior
+from blitz.modules.weight_sampler import TrainableRandomDistribution, PriorWeightDistribution
 from blitz.modules import BayesianLinear
 
 class TestWeightSampler(unittest.TestCase):
@@ -42,7 +42,7 @@ class TestWeightSampler(unittest.TestCase):
 
         log_posterior = dist.log_posterior()
 
-        prior_dist = ScaleMixturePrior(0.5, 1, .002)
+        prior_dist = PriorWeightDistribution(0.5, 1, .002)
         log_prior = prior_dist.log_prior(s1)
 
         #print(log_prior)
@@ -60,7 +60,7 @@ class TestWeightSampler(unittest.TestCase):
 
         log_posterior = dist.log_posterior()
 
-        prior_dist = ScaleMixturePrior(dist=torch.distributions.studentT.StudentT(1, 1))
+        prior_dist = PriorWeightDistribution(dist=torch.distributions.studentT.StudentT(1, 1))
         log_prior = prior_dist.log_prior(s1)
 
         #print(log_prior)

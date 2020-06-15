@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from blitz.modules.base_bayesian_module import BayesianModule
-from blitz.modules.weight_sampler import TrainableRandomDistribution, ScaleMixturePrior
+from blitz.modules.weight_sampler import TrainableRandomDistribution, PriorWeightDistribution
 
 class BayesianEmbedding(BayesianModule):
     """
@@ -70,7 +70,7 @@ class BayesianEmbedding(BayesianModule):
         self.weight_sampler = TrainableRandomDistribution(self.weight_mu, self.weight_rho)
 
         # Priors (as BBP paper)
-        self.weight_prior_dist = ScaleMixturePrior(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        self.weight_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         self.log_prior = 0
         self.log_variational_posterior = 0
 

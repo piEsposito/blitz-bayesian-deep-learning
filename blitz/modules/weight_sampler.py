@@ -50,7 +50,7 @@ class TrainableRandomDistribution(nn.Module):
         log_posteriors =  -log_sqrt2pi - torch.log(self.sigma) - (((w - self.mu) ** 2)/(2 * self.sigma ** 2)) - 0.5
         return log_posteriors.sum()
 
-class ScaleMixturePrior(nn.Module):
+class PriorWeightDistribution(nn.Module):
     #Calculates a Scale Mixture Prior distribution for the prior part of the complexity cost on Bayes by Backprop paper
     def __init__(self,
                  pi=1,
