@@ -35,6 +35,7 @@ class BayesianRegressor(nn.Module):
         
     def forward(self, x):
         x_ = self.blinear1(x)
+        x_ = F.relu(x_)
         return self.blinear2(x_)
 
 
