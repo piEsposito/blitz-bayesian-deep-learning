@@ -9,8 +9,8 @@ def minibatch_weight(batch_idx, num_batches):
         the complexity cost.
 
     Parameters:
-        batch_idx: int -> the current batch index
+        batch_idx: int -> the current batch index (from 0 to num_batches-1)
         num_batches: int -> the total number of batches
     """
 
-    return 2 ** (num_batches - batch_idx) / (2 ** num_batches - batch_idx)
+    return 2 ** (num_batches - batch_idx - 1) / (2 ** num_batches - 1)
