@@ -78,9 +78,13 @@ class BayesianConv1d(BayesianModule):
         self.weight_sampler = TrainableRandomDistribution(self.weight_mu, self.weight_rho)
 
         #our biases
-        self.bias_mu = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_mu_init, 0.1))
-        self.bias_rho = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_rho_init, 0.1))
-        self.bias_sampler = TrainableRandomDistribution(self.bias_mu, self.bias_rho)
+        if self.bias:
+            self.bias_mu = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_mu_init, 0.1))
+            self.bias_rho = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_rho_init, 0.1))
+            self.bias_sampler = TrainableRandomDistribution(self.bias_mu, self.bias_rho)
+            self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        else:
+            self.register_buffer('bias_zero', torch.zeros((self.out_channels)) )
 
         # Priors (as BBP paper)
         self.weight_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
@@ -102,7 +106,7 @@ class BayesianConv1d(BayesianModule):
             b_log_prior = self.bias_prior_dist.log_prior(b)
 
         else:
-            b = torch.zeros((self.out_channels))
+            b = self.bias_zero
             b_log_posterior = 0
             b_log_prior = 0
 
@@ -124,7 +128,7 @@ class BayesianConv1d(BayesianModule):
             bias = self.bias_mu
             assert bias is self.bias_mu, "The bias inputed should be this layer parameter, not a clone."
         else:
-            bias = torch.zeros(self.out_channels)
+            bias = self.bias_zero
 
         return F.conv1d(input=x,
                         weight=self.weight_mu,
@@ -206,13 +210,16 @@ class BayesianConv2d(BayesianModule):
         self.weight_sampler = TrainableRandomDistribution(self.weight_mu, self.weight_rho)
 
         #our biases
-        self.bias_mu = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_mu_init, 0.1))
-        self.bias_rho = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_rho_init, 0.1))
-        self.bias_sampler = TrainableRandomDistribution(self.bias_mu, self.bias_rho)
+        if self.bias:
+            self.bias_mu = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_mu_init, 0.1))
+            self.bias_rho = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_rho_init, 0.1))
+            self.bias_sampler = TrainableRandomDistribution(self.bias_mu, self.bias_rho)
+            self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        else:
+            self.register_buffer('bias_zero', torch.zeros((self.out_channels)) )
 
         # Priors (as BBP paper)
         self.weight_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
-        self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         self.log_prior = 0
         self.log_variational_posterior = 0
 
@@ -230,7 +237,7 @@ class BayesianConv2d(BayesianModule):
             b_log_prior = self.bias_prior_dist.log_prior(b)
 
         else:
-            b = torch.zeros((self.out_channels))
+            b = self.bias_zero
             b_log_posterior = 0
             b_log_prior = 0
 
@@ -252,7 +259,7 @@ class BayesianConv2d(BayesianModule):
             bias = self.bias_mu
             assert bias is self.bias_mu, "The bias inputed should be this layer parameter, not a clone."
         else:
-            bias = torch.zeros(self.out_channels)
+            bias = self.bias_zero
 
         return F.conv2d(input=x,
                         weight=self.weight_mu,
@@ -334,13 +341,16 @@ class BayesianConv3d(BayesianModule):
         self.weight_sampler = TrainableRandomDistribution(self.weight_mu, self.weight_rho)
 
         #our biases
-        self.bias_mu = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_mu_init, 0.1))
-        self.bias_rho = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_rho_init, 0.1))
-        self.bias_sampler = TrainableRandomDistribution(self.bias_mu, self.bias_rho)
+        if self.bias:
+            self.bias_mu = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_mu_init, 0.1))
+            self.bias_rho = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_rho_init, 0.1))
+            self.bias_sampler = TrainableRandomDistribution(self.bias_mu, self.bias_rho)
+            self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        else:
+            self.register_buffer('bias_zero', torch.zeros((self.out_channels)) )
 
         # Priors (as BBP paper)
         self.weight_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
-        self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         self.log_prior = 0
         self.log_variational_posterior = 0
 
@@ -358,7 +368,7 @@ class BayesianConv3d(BayesianModule):
             b_log_prior = self.bias_prior_dist.log_prior(b)
 
         else:
-            b = torch.zeros((self.out_channels))
+            b = self.bias_zero
             b_log_posterior = 0
             b_log_prior = 0
 
@@ -380,7 +390,7 @@ class BayesianConv3d(BayesianModule):
             bias = self.bias_mu
             assert bias is self.bias_mu, "The bias inputed should be this layer parameter, not a clone."
         else:
-            bias = torch.zeros(self.out_channels)
+            bias = self.bias_zero
 
         return F.conv3d(input=x,
                         weight=self.weight_mu,
