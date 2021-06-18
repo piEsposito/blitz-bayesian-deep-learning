@@ -123,6 +123,7 @@ class BayesianRegressor(nn.Module):
         
     def forward(self, x):
         x_ = self.blinear1(x)
+        x_ = F.relu(x_)
         return self.blinear2(x_)
 ```
 
@@ -154,7 +155,7 @@ Notice here that we create our `BayesianRegressor` as we would do with other neu
 
 ```python
 regressor = BayesianRegressor(13, 1)
-optimizer = optim.SGD(regressor.parameters(), lr=0.001)
+optimizer = optim.Adam(regressor.parameters(), lr=0.01)
 criterion = torch.nn.MSELoss()
 
 ds_train = torch.utils.data.TensorDataset(X_train, y_train)
