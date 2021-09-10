@@ -87,7 +87,8 @@ class PriorWeightDistribution(nn.Module):
             prob_n2 = torch.exp(self.dist2.log_prob(w))
         if self.dist2 is None:
             prob_n2 = 0
-
-        prior_pdf = (self.pi * prob_n1 + (1 - self.pi) * prob_n2)
+        
+        # Prior of the mixture distribution, adding 1e-6 prevents numeric problems with log(p) for small p
+        prior_pdf = (self.pi * prob_n1 + (1 - self.pi) * prob_n2) + 1e-6
 
         return (torch.log(prior_pdf) - 0.5).sum()
