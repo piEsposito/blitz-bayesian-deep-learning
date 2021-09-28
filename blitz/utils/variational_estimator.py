@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 
 from blitz.modules.weight_sampler import TrainableRandomDistribution
 from blitz.losses import kl_divergence_from_nn
@@ -61,11 +62,18 @@ def variational_estimator(nn_class):
         """
 
         loss = 0
+        likelihood_cost = 0
+        complexity_cost = 0
+        # Array to collect the outputs
+        y_hat = []
         for _ in range(sample_nbr):
             outputs = self(inputs)
-            loss += criterion(outputs, labels) 
-            loss += self.nn_kl_divergence() * complexity_cost_weight
-        return loss / sample_nbr
+            y_hat.append(outputs.cpu().detach().numpy())
+            likelihood_cost += criterion(outputs, labels)
+            complexity_cost += self.nn_kl_divergence() * complexity_cost_weight
+        return np.array(y_hat), (likelihood_cost + complexity_cost) / sample_nbr,\
+               likelihood_cost / sample_nbr,\
+               complexity_cost / sample_nbr
     
     setattr(nn_class, "sample_elbo", sample_elbo)
 
