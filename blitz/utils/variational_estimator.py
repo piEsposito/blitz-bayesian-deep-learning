@@ -45,7 +45,7 @@ def variational_estimator(nn_class):
                 The ELBO Loss consists of the sum of the KL Divergence of the model 
                  (explained above, interpreted as a "complexity part" of the loss)
                  with the actual criterion - (loss function) of optimization of our model
-                 (the performance part of the loss). 
+                 (the performance part of the loss).
 
                 As we are using variational inference, it takes several (quantified by the parameter sample_nbr) Monte-Carlo
                  samples of the weights in order to gather a better approximation for the loss.
@@ -57,7 +57,13 @@ def variational_estimator(nn_class):
                 criterion: torch.nn.Module, custom criterion (loss) function, torch.nn.functional function -> criterion to gather
                             the performance cost for the model
                 sample_nbr: int -> The number of times of the weight-sampling and predictions done in our Monte-Carlo approach to 
-                            gather the loss to be .backwarded in the optimization of the model.        
+                            gather the loss to be .backwarded in the optimization of the model.
+
+            Outputs:
+                array of predictions
+                ELBO Loss
+                performance part
+                complexity part
         
         """
 
