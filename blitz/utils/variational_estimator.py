@@ -75,7 +75,7 @@ def variational_estimator(nn_class):
                     complexity_cost_weight=1):
 
         """ Samples the ELBO Loss for a batch of data, consisting of inputs and corresponding-by-index labels.
-            This version of the function returns the performance part and complexity part of the Loss individually
+            This version of the function returns the performance part and complexity part of the loss individually
             as well as an array of predictions
 
                 The ELBO Loss consists of the sum of the KL Divergence of the model 
