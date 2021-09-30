@@ -116,7 +116,7 @@ def variational_estimator(nn_class):
                likelihood_cost / sample_nbr,\
                complexity_cost / sample_nbr
     
-    setattr(nn_class, "sample_elbo_detailed_loss", sample_elbo)
+    setattr(nn_class, "sample_elbo_detailed_loss", sample_elbo_detailed_loss)
 
 
     def freeze_model(self):
