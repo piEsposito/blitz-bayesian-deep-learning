@@ -71,7 +71,7 @@ class TestVariationalInference(unittest.TestCase):
                                labels=batch[1],
                                criterion=torch.nn.CrossEntropyLoss(),
                                sample_nbr=5,
-                               complexity_cost_weight=1)
+                               complexity_cost_weight=0)
 
         self.assertEqual((elbo==elbo).all(), torch.tensor(True))
         
