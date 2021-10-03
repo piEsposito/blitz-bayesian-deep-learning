@@ -77,6 +77,54 @@ class TestVariationalInference(unittest.TestCase):
         
         pass
 
+    def test_elbo_detailed_loss_sampler(self):
+        dataset = dsets.MNIST(root="./data",
+                              train=True,
+                              transform=transforms.ToTensor(),
+                              download=True
+                              )
+
+        dataloader = torch.utils.data.DataLoader(dataset=dataset,
+                                                 batch_size=16,
+                                                 shuffle=True)
+
+        batch = next(iter(dataloader))
+
+        @variational_estimator
+        class BayesianMLP(nn.Module):
+            def __init__(self, input_dim, output_dim):
+                super().__init__()
+                # self.linear = nn.Linear(input_dim, output_dim)
+                self.blinear1 = BayesianLinear(input_dim, 512)
+                self.blinear2 = BayesianLinear(512, output_dim)
+
+            def forward(self, x):
+                x_ = x.view(-1, 28 * 28)
+                x_ = self.blinear1(x_)
+                return self.blinear2(x_)
+
+        net = BayesianMLP(28 * 28, 10)
+        elbo = net.sample_elbo_detailed_loss(inputs=batch[0],
+                               labels=batch[1],
+                               criterion=torch.nn.CrossEntropyLoss(),
+                               sample_nbr=5,
+                               complexity_cost_weight=1)
+
+        elbo = net.sample_elbo_detailed_loss(inputs=batch[0],
+                               labels=batch[1],
+                               criterion=torch.nn.CrossEntropyLoss(),
+                               sample_nbr=5,
+                               complexity_cost_weight=0)
+
+        self.assertEqual((elbo == elbo), True)
+        self.assertEqual(elbo[3], torch.tensor(0))
+        self.assertEqual(len(elbo), 4) # There are 4 return values
+        self.assertEqual(len(elbo[0]), 5) # Matches the number of samples for Monte-Carlo-sampling
+        self.assertEqual(len(elbo[0][0]), 16) # Matches the batch size
+        self.assertEqual(len(elbo[0][0][0]), 10) # Matches the output size of the neural network
+
+        pass
+
     def test_freeze_estimator(self):
         #create model, freeze it
         #infer two times on same datapoint, check if all equal
