@@ -6,8 +6,8 @@ from torch.nn import functional as F
 from blitz.modules.base_bayesian_module import BayesianModule
 from blitz.modules.weight_sampler import TrainableRandomDistribution, PriorWeightDistribution
 
-
 class BayesianConv1d(BayesianModule):
+
     # Implements Bayesian Conv2d layer, by drawing them using Weight Uncertanity on Neural Networks algorithm
     """
     Bayesian Linear layer, implements a Convolution 1D layer as proposed on Weight Uncertainity on Neural Networks
@@ -33,26 +33,25 @@ class BayesianConv1d(BayesianModule):
         freeze: bool -> wheter the model will start with frozen(deterministic) weights, or not
     
     """
-
     def __init__(self,
                  in_channels,
                  out_channels,
                  kernel_size,
-                 groups=1,
-                 stride=1,
-                 padding=0,
-                 dilation=1,
+                 groups = 1,
+                 stride = 1,
+                 padding = 0,
+                 dilation = 1,
                  bias=True,
-                 prior_sigma_1=0.1,
-                 prior_sigma_2=0.002,
-                 prior_pi=1,
-                 posterior_mu_init=0,
-                 posterior_rho_init=-7.0,
-                 freeze=False,
-                 prior_dist=None):
+                 prior_sigma_1 = 0.1,
+                 prior_sigma_2 = 0.002,
+                 prior_pi = 1,
+                 posterior_mu_init = 0,
+                 posterior_rho_init = -7.0,
+                 freeze = False,
+                 prior_dist = None):
         super().__init__()
-
-        # our main parameters
+        
+        #our main parameters
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.freeze = freeze
@@ -63,43 +62,39 @@ class BayesianConv1d(BayesianModule):
         self.dilation = dilation
         self.bias = bias
 
+
         self.posterior_mu_init = posterior_mu_init
         self.posterior_rho_init = posterior_rho_init
 
-        # parameters for the scale mixture prior
+        #parameters for the scale mixture prior
         self.prior_sigma_1 = prior_sigma_1
         self.prior_sigma_2 = prior_sigma_2
         self.prior_pi = prior_pi
         self.prior_dist = prior_dist
 
-        # our weights
-        self.weight_mu = nn.Parameter(
-            torch.Tensor(out_channels, in_channels // groups, kernel_size).normal_(posterior_mu_init, 0.1))
-        self.weight_rho = nn.Parameter(
-            torch.Tensor(out_channels, in_channels // groups, kernel_size).normal_(posterior_rho_init, 0.1))
+        #our weights
+        self.weight_mu = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, kernel_size).normal_(posterior_mu_init, 0.1))
+        self.weight_rho = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, kernel_size).normal_(posterior_rho_init, 0.1))
         self.weight_sampler = TrainableRandomDistribution(self.weight_mu, self.weight_rho)
 
-        # our biases
+        #our biases
         if self.bias:
             self.bias_mu = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_mu_init, 0.1))
             self.bias_rho = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_rho_init, 0.1))
             self.bias_sampler = TrainableRandomDistribution(self.bias_mu, self.bias_rho)
-            self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2,
-                                                           dist=self.prior_dist)
+            self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         else:
-            self.register_buffer('bias_zero', torch.zeros((self.out_channels)))
+            self.register_buffer('bias_zero', torch.zeros((self.out_channels)) )
 
         # Priors (as BBP paper)
-        self.weight_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2,
-                                                         dist=self.prior_dist)
-        self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2,
-                                                       dist=self.prior_dist)
+        self.weight_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         self.log_prior = 0
         self.log_variational_posterior = 0
 
     def forward(self, x):
-        # Forward with uncertain weights, fills bias with zeros if layer has no bias
-        # Also calculates the complecity cost for this sampling
+        #Forward with uncertain weights, fills bias with zeros if layer has no bias
+        #Also calculates the complecity cost for this sampling
         if self.freeze:
             return self.forward_frozen(x)
 
@@ -143,8 +138,8 @@ class BayesianConv1d(BayesianModule):
                         dilation=self.dilation,
                         groups=self.groups)
 
-
 class BayesianConv2d(BayesianModule):
+
     # Implements Bayesian Conv2d layer, by drawing them using Weight Uncertanity on Neural Networks algorithm
     """
     Bayesian Linear layer, implements a Convolution 2D layer as proposed on Weight Uncertainity on Neural Networks
@@ -170,26 +165,25 @@ class BayesianConv2d(BayesianModule):
         freeze: bool -> wheter the model will start with frozen(deterministic) weights, or not
     
     """
-
     def __init__(self,
                  in_channels,
                  out_channels,
                  kernel_size,
-                 groups=1,
-                 stride=1,
-                 padding=0,
-                 dilation=1,
+                 groups = 1,
+                 stride = 1,
+                 padding = 0,
+                 dilation = 1,
                  bias=True,
-                 prior_sigma_1=0.1,
-                 prior_sigma_2=0.002,
-                 prior_pi=1,
-                 posterior_mu_init=0,
-                 posterior_rho_init=-6.0,
-                 freeze=False,
-                 prior_dist=None):
+                 prior_sigma_1 = 0.1,
+                 prior_sigma_2 = 0.002,
+                 prior_pi = 1,
+                 posterior_mu_init = 0,
+                 posterior_rho_init = -6.0,
+                 freeze = False,
+                 prior_dist = None):
         super().__init__()
-
-        # our main parameters
+        
+        #our main parameters
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.freeze = freeze
@@ -200,41 +194,38 @@ class BayesianConv2d(BayesianModule):
         self.dilation = dilation
         self.bias = bias
 
+
         self.posterior_mu_init = posterior_mu_init
         self.posterior_rho_init = posterior_rho_init
 
-        # parameters for the scale mixture prior
+        #parameters for the scale mixture prior
         self.prior_sigma_1 = prior_sigma_1
         self.prior_sigma_2 = prior_sigma_2
         self.prior_pi = prior_pi
         self.prior_dist = prior_dist
 
-        # our weights
-        self.weight_mu = nn.Parameter(
-            torch.Tensor(out_channels, in_channels // groups, *kernel_size).normal_(posterior_mu_init, 0.1))
-        self.weight_rho = nn.Parameter(
-            torch.Tensor(out_channels, in_channels // groups, *kernel_size).normal_(posterior_rho_init, 0.1))
+        #our weights
+        self.weight_mu = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *kernel_size).normal_(posterior_mu_init, 0.1))
+        self.weight_rho = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *kernel_size).normal_(posterior_rho_init, 0.1))
         self.weight_sampler = TrainableRandomDistribution(self.weight_mu, self.weight_rho)
 
-        # our biases
+        #our biases
         if self.bias:
             self.bias_mu = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_mu_init, 0.1))
             self.bias_rho = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_rho_init, 0.1))
             self.bias_sampler = TrainableRandomDistribution(self.bias_mu, self.bias_rho)
-            self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2,
-                                                           dist=self.prior_dist)
+            self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         else:
-            self.register_buffer('bias_zero', torch.zeros((self.out_channels)))
+            self.register_buffer('bias_zero', torch.zeros((self.out_channels)) )
 
         # Priors (as BBP paper)
-        self.weight_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2,
-                                                         dist=self.prior_dist)
+        self.weight_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         self.log_prior = 0
         self.log_variational_posterior = 0
 
     def forward(self, x):
-        # Forward with uncertain weights, fills bias with zeros if layer has no bias
-        # Also calculates the complecity cost for this sampling
+        #Forward with uncertain weights, fills bias with zeros if layer has no bias
+        #Also calculates the complecity cost for this sampling
         if self.freeze:
             return self.forward_frozen(x)
 
@@ -278,8 +269,8 @@ class BayesianConv2d(BayesianModule):
                         dilation=self.dilation,
                         groups=self.groups)
 
-
 class BayesianConv3d(BayesianModule):
+
     # Implements Bayesian Conv2d layer, by drawing them using Weight Uncertanity on Neural Networks algorithm
     """
     Bayesian Linear layer, implements a Convolution 3D layer as proposed on Weight Uncertainity on Neural Networks
@@ -305,26 +296,25 @@ class BayesianConv3d(BayesianModule):
         freeze: bool -> wheter the model will start with frozen(deterministic) weights, or not
     
     """
-
     def __init__(self,
                  in_channels,
                  out_channels,
                  kernel_size,
-                 groups=1,
-                 stride=1,
-                 padding=0,
-                 dilation=1,
+                 groups = 1,
+                 stride = 1,
+                 padding = 0,
+                 dilation = 1,
                  bias=True,
-                 prior_sigma_1=0.1,
-                 prior_sigma_2=0.002,
-                 prior_pi=1,
-                 posterior_mu_init=0,
-                 posterior_rho_init=-6.0,
-                 freeze=False,
-                 prior_dist=None):
+                 prior_sigma_1 = 0.1,
+                 prior_sigma_2 = 0.002,
+                 prior_pi = 1,
+                 posterior_mu_init = 0,
+                 posterior_rho_init = -6.0,
+                 freeze = False,
+                 prior_dist = None):
         super().__init__()
-
-        # our main parameters
+        
+        #our main parameters
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.freeze = freeze
@@ -335,41 +325,38 @@ class BayesianConv3d(BayesianModule):
         self.dilation = dilation
         self.bias = bias
 
+
         self.posterior_mu_init = posterior_mu_init
         self.posterior_rho_init = posterior_rho_init
 
-        # parameters for the scale mixture prior
+        #parameters for the scale mixture prior
         self.prior_sigma_1 = prior_sigma_1
         self.prior_sigma_2 = prior_sigma_2
         self.prior_pi = prior_pi
         self.prior_dist = prior_dist
 
-        # our weights
-        self.weight_mu = nn.Parameter(
-            torch.Tensor(out_channels, in_channels // groups, *kernel_size).normal_(posterior_mu_init, 0.1))
-        self.weight_rho = nn.Parameter(
-            torch.Tensor(out_channels, in_channels // groups, *kernel_size).normal_(posterior_rho_init, 0.1))
+        #our weights
+        self.weight_mu = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *kernel_size).normal_(posterior_mu_init, 0.1))
+        self.weight_rho = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *kernel_size).normal_(posterior_rho_init, 0.1))
         self.weight_sampler = TrainableRandomDistribution(self.weight_mu, self.weight_rho)
 
-        # our biases
+        #our biases
         if self.bias:
             self.bias_mu = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_mu_init, 0.1))
             self.bias_rho = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_rho_init, 0.1))
             self.bias_sampler = TrainableRandomDistribution(self.bias_mu, self.bias_rho)
-            self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2,
-                                                           dist=self.prior_dist)
+            self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         else:
-            self.register_buffer('bias_zero', torch.zeros((self.out_channels)))
+            self.register_buffer('bias_zero', torch.zeros((self.out_channels)) )
 
         # Priors (as BBP paper)
-        self.weight_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2,
-                                                         dist=self.prior_dist)
+        self.weight_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         self.log_prior = 0
         self.log_variational_posterior = 0
 
     def forward(self, x):
-        # Forward with uncertain weights, fills bias with zeros if layer has no bias
-        # Also calculates the complecity cost for this sampling
+        #Forward with uncertain weights, fills bias with zeros if layer has no bias
+        #Also calculates the complecity cost for this sampling
         if self.freeze:
             return self.forward_frozen(x)
 
