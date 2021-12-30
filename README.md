@@ -255,9 +255,9 @@ It is known that the crossentropy loss (and MSE) are differentiable. Therefore i
 
 As proposed in [Weight Uncertainty in Neural Networks paper](https://arxiv.org/abs/1505.05424), we can gather the complexity cost of a distribution by taking the [Kullback-Leibler Divergence](https://jhui.github.io/2017/01/05/Deep-learning-Information-theory/) from it to a much simpler distribution, and by making some approximation, we will can differentiate this function relative to its variables (the distributions):
 
-1. Let ![equation](https://latex.codecogs.com/gif.latex?\mathcall{P}(w)) be a low-entropy distribution pdf set by hand, which will be assumed as an "a priori" distribution for the weights
+1. Let ![equation](https://latex.codecogs.com/gif.latex?{P}(w)) be a low-entropy distribution pdf set by hand, which will be assumed as an "a priori" distribution for the weights
 
-2. Let ![equation](https://latex.codecogs.com/gif.latex?\mathcall{Q}(w&space;|&space;\theta)) be the a posteriori empirical distribution pdf for our sampled weights, given its parameters.
+2. Let ![equation](https://latex.codecogs.com/gif.latex?{Q}(w&space;|&space;\theta)) be the a posteriori empirical distribution pdf for our sampled weights, given its parameters.
 
 
 
@@ -267,34 +267,34 @@ Therefore, for each scalar on the W sampled matrix:
 
 
 
-3. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{D}_{KL}(&space;\mathcall{Q}(w&space;|&space;\theta)&space;\lVert&space;\mathcall{P}(w)&space;)&space;=&space;\lim_{n\to\infty}1/n\sum_{i=0}^{n}&space;{Q}(w^{(i)}&space;|&space;\theta)*&space;(\log{\mathcall{Q}(w^{(i)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(i)})}&space;))
+3. ![equation](https://latex.codecogs.com/gif.latex?{D}_{KL}(&space;{Q}(w&space;|&space;\theta)&space;\lVert&space;{P}(w)&space;)&space;=&space;\lim_{n\to\infty}1/n\sum_{i=0}^{n}&space;{Q}(w^{(i)}&space;|&space;\theta)*&space;(\log{{Q}(w^{(i)}&space;|&space;\theta)}&space;-&space;\log{{P}(w^{(i)})}&space;))
 
 
 By assuming a very large n, we could approximate:
 
-4. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{D}_{KL}(&space;\mathcall{Q}(w&space;|&space;\theta)&space;\lVert&space;\mathcall{P}(w)&space;)&space;=&space;1/n\sum_{i=0}^{n}&space;{Q}(w^{(i)}&space;|&space;\theta)*&space;(\log{\mathcall{Q}(w^{(i)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(i)})}&space;))
+4. ![equation](https://latex.codecogs.com/gif.latex?{D}_{KL}(&space;{Q}(w&space;|&space;\theta)&space;\lVert&space;{P}(w)&space;)&space;=&space;1/n\sum_{i=0}^{n}&space;{Q}(w^{(i)}&space;|&space;\theta)*&space;(\log{{Q}(w^{(i)}&space;|&space;\theta)}&space;-&space;\log{{P}(w^{(i)})}&space;))
 
 
 and therefore:
 
 
-5. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{D}_{KL}(&space;\mathcall{Q}(w&space;|&space;\theta)&space;\lVert&space;\mathcall{P}(w)&space;)&space;=&space;\mu_Q&space;*\sum_{i=0}^{n}&space;(\log{\mathcall{Q}(w^{(i)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(i)})}&space;))
+5. ![equation](https://latex.codecogs.com/gif.latex?{D}_{KL}(&space;{Q}(w&space;|&space;\theta)&space;\lVert&space;{P}(w)&space;)&space;=&space;\mu_Q&space;*\sum_{i=0}^{n}&space;(\log{{Q}(w^{(i)}&space;|&space;\theta)}&space;-&space;\log{{P}(w^{(i)})}&space;))
 
 
 As the expected (mean) of the Q distribution ends up by just scaling the values, we can take it out of the equation (as there will be no framework-tracing). Have a complexity cost of the nth sample as:
 
-6. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{C^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;=&space;(\log{\mathcall{Q}(w^{(n)}&space;|&space;\theta)}&space;-&space;\log{\mathcall{P}(w^{(n)})}&space;))
+6. ![equation](https://latex.codecogs.com/gif.latex?{C^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;=&space;(\log{{Q}(w^{(n)}&space;|&space;\theta)}&space;-&space;\log{{P}(w^{(n)})}&space;))
 
 Which is differentiable relative to all of its parameters. 
 
 ## To get the whole cost function at the nth sample:
 
-1. Let a performance (fit to data) function be: ![equation](https://latex.codecogs.com/gif.latex?\mathcall{P^{(n)}&space;(w^{(n)},&space;\theta)})
+1. Let a performance (fit to data) function be: ![equation](https://latex.codecogs.com/gif.latex?{P^{(n)}&space;(w^{(n)},&space;\theta)})
 
 
 Therefore the whole cost function on the nth sample of weights will be:
 
-2. ![equation](https://latex.codecogs.com/gif.latex?\mathcall{L^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;=&space;\mathcall{C^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;&plus;&space;\mathcall{P^{(n)}&space;(w^{(n)},&space;\theta)&space;})
+2. ![equation](https://latex.codecogs.com/gif.latex?{L^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;=&space;{C^{(n)}&space;(w^{(n)},&space;\theta)&space;}&space;&plus;&space;{P^{(n)}&space;(w^{(n)},&space;\theta)&space;})
 
 We can estimate the true full Cost function by Monte Carlo sampling it (feedforwarding the netwok X times and taking the mean over full loss) and then backpropagate using our estimated value. It works for a low number of experiments per backprop and even for unitary experiments.
 
