@@ -24,30 +24,21 @@ class BayesianLinear(BayesianModule):
         freeze: bool -> wheter the model will start with frozen(deterministic) weights, or not
     
     """
-    def __init__(self,
-                 in_features,
-                 out_features,
-                 bias=True,
-                 prior_sigma_1 = 0.1,
-                 prior_sigma_2 = 0.4,
-                 prior_pi = 1,
-                 posterior_mu_init = 0,
-                 posterior_rho_init = -7.0,
-                 freeze = False,
-                 prior_dist = None):
+
+    def __init__(self, in_features, out_features, bias=True, prior_sigma_1=0.1, prior_sigma_2=0.4,
+                 prior_pi=1, posterior_mu_init=0, posterior_rho_init=-7.0, freeze=False, prior_dist=None):
         super().__init__()
 
-        #our main parameters
+        # our main parameters
         self.in_features = in_features
         self.out_features = out_features
         self.bias = bias
         self.freeze = freeze
 
-
         self.posterior_mu_init = posterior_mu_init
         self.posterior_rho_init = posterior_rho_init
 
-        #parameters for the scale mixture prior
+        # parameters for the scale mixture prior
         self.prior_sigma_1 = prior_sigma_1
         self.prior_sigma_2 = prior_sigma_2
         self.prior_pi = prior_pi
@@ -64,15 +55,17 @@ class BayesianLinear(BayesianModule):
         self.bias_sampler = TrainableRandomDistribution(self.bias_mu, self.bias_rho)
 
         # Priors (as BBP paper)
-        self.weight_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
-        self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
+        self.weight_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2,
+                                                         dist=self.prior_dist)
+        self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2,
+                                                       dist=self.prior_dist)
         self.log_prior = 0
         self.log_variational_posterior = 0
 
     def forward(self, x):
         # Sample the weights and forward it
-        
-        #if the model is frozen, return frozen
+
+        # if the model is frozen, return frozen
         if self.freeze:
             return self.forward_frozen(x)
 
