@@ -8,8 +8,6 @@ By using our core weight sampler classes, you can extend and improve this librar
 
 Our objective is empower people to apply Bayesian Deep Learning by focusing rather on their idea, and not the hard-coding part. 
 
-## Roadmap:
- * Enable reparametrization for different posterior distributions than Normal.
  
 # Index
  * [Install](#Install)
