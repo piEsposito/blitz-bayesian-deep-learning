@@ -40,6 +40,11 @@ To install BLiTZ you can use pip command:
 ```
 pip install blitz-bayesian-pytorch
 ```
+Or, via conda:
+
+```
+conda install -c conda-forge blitz-bayesian-pytorch
+```
 
 You can also git-clone it and pip-install it locally:
 
