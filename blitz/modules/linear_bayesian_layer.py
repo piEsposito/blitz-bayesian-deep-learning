@@ -84,7 +84,7 @@ class BayesianLinear(BayesianModule):
             b_log_prior = self.bias_prior_dist.log_prior(b)
 
         else:
-            b = torch.zeros((self.out_features))
+            b = torch.zeros((self.out_features), device=x.device)
             b_log_posterior = 0
             b_log_prior = 0
 
