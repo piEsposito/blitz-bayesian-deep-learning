@@ -47,7 +47,7 @@ conda install -c conda-forge blitz-bayesian-pytorch
 You can also git-clone it and pip-install it locally:
 
 ```
-conda create -n blitz python=3.6
+conda create -n blitz python=3.9
 conda activate blitz
 git clone https://github.com/piEsposito/blitz-bayesian-deep-learning.git
 cd blitz-bayesian-deep-learning
