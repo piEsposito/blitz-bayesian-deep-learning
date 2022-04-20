@@ -302,7 +302,7 @@ Therefore the whole cost function on the nth sample of weights will be:
 We can estimate the true full Cost function by Monte Carlo sampling it (feedforwarding the netwok X times and taking the mean over full loss) and then backpropagate using our estimated value. It works for a low number of experiments per backprop and even for unitary experiments.
 
 ## Some notes and wrap up
-We came to the and of a Bayesian Deep Learning in a Nutshell tutorial. By knowing what is being done here, you can implement your bnn model as you wish. 
+We came to the end of a Bayesian Deep Learning in a Nutshell tutorial. By knowing what is being done here, you can implement your bnn model as you wish. 
 
 Maybe you can optimize by doing one optimize step per sample, or by using this Monte-Carlo-ish method to gather the loss some times, take its mean and then optimizer. Your move.
 
