@@ -6,8 +6,6 @@ BLiTZ is a simple and extensible library to create Bayesian Neural Network Layer
 
 By using our core weight sampler classes, you can extend and improve this library to add uncertanity to a bigger scope of layers as you will in a well-integrated to PyTorch way. Also pull requests are welcome.
 
-Our objective is empower people to apply Bayesian Deep Learning by focusing rather on their idea, and not the hard-coding part. 
-
  
 # Index
  * [Install](#Install)
