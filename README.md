@@ -325,6 +325,4 @@ If you use `BLiTZ` in your research, you can cite it as follows:
 }
 ```
  
-###### Special thanks to Intel Student Ambassador program
-
 ###### Made by Pi Esposito
