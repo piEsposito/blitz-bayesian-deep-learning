@@ -7,11 +7,11 @@ import numpy as np
 from blitz.modules import BayesianLinear
 from blitz.utils import variational_estimator
 
-from sklearn.datasets import load_boston
+from sklearn.datasets import fetch_california_housing
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
-X, y = load_boston(return_X_y=True)
+X, y = fetch_california_housing(return_X_y=True)
 X = StandardScaler().fit_transform(X)
 y = StandardScaler().fit_transform(np.expand_dims(y, -1))
 
@@ -55,7 +55,7 @@ def evaluate_regression(regressor,
     return ic_acc, (ci_upper >= y).float().mean(), (ci_lower <= y).float().mean()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-regressor = BayesianRegressor(13, 1).to(device)
+regressor = BayesianRegressor(8, 1).to(device)
 optimizer = optim.Adam(regressor.parameters(), lr=0.01)
 criterion = torch.nn.MSELoss()
 
